@@ -46,18 +46,13 @@ if( PUMEX_DOWNLOAD_EXTERNAL_GLM )
     GIT_REPOSITORY "https://github.com/g-truc/glm.git"
     GIT_TAG "0.9.8"
     SOURCE_DIR "${GLM_SOURCE_DIR}"
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    UPDATE_COMMAND ""
-    PATCH_COMMAND ""
-    TEST_COMMAND ""
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory "${GLM_SOURCE_DIR}/glm" "${INTERMEDIATE_INSTALL_DIR}/include/glm"
     UPDATE_DISCONNECTED TRUE
     )
   ExternalProject_Add_Step( glm-external glm-create-folders
     COMMAND ${CMAKE_COMMAND} -E make_directory "${GLM_BUILD_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${GLM_BUILD_DIR}/build"
-    DEPENDEES build
+    DEPENDERS build
   )
   ExternalProject_Add_Step( glm-external glm-copy-intermediate
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${INTERMEDIATE_INSTALL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}"
@@ -79,18 +74,13 @@ if( PUMEX_DOWNLOAD_EXTERNAL_GLI )
     GIT_REPOSITORY "https://github.com/g-truc/gli.git"
     GIT_TAG "0.8.2"
     SOURCE_DIR "${GLI_SOURCE_DIR}"
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    UPDATE_COMMAND ""
-    PATCH_COMMAND ""
-    TEST_COMMAND ""
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory "${GLI_SOURCE_DIR}/gli" "${INTERMEDIATE_INSTALL_DIR}/include/gli"
     UPDATE_DISCONNECTED TRUE
   )
   ExternalProject_Add_Step( gli-external gli-create-folders
     COMMAND ${CMAKE_COMMAND} -E make_directory "${GLI_BUILD_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${GLI_BUILD_DIR}/build"
-    DEPENDEES build
+    DEPENDERS build
   )
   ExternalProject_Add_Step( gli-external gli-copy-intermediate
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${INTERMEDIATE_INSTALL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}"
@@ -113,18 +103,13 @@ if( PUMEX_BUILD_EXAMPLES )
       GIT_REPOSITORY "https://github.com/Taywee/args.git"
       GIT_TAG "6.1.0"
       SOURCE_DIR "${ARGS_SOURCE_DIR}"
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND ""
-      UPDATE_COMMAND ""
-      PATCH_COMMAND ""
-      TEST_COMMAND ""
       INSTALL_COMMAND ${CMAKE_COMMAND} -E copy "${ARGS_SOURCE_DIR}/args.hxx" "${INTERMEDIATE_INSTALL_DIR}/include/args.hxx"
       UPDATE_DISCONNECTED TRUE
       )
     ExternalProject_Add_Step( args-external args-create-folders
       COMMAND ${CMAKE_COMMAND} -E make_directory "${ARGS_BUILD_DIR}"
       COMMAND ${CMAKE_COMMAND} -E make_directory "${ARGS_BUILD_DIR}/build"
-      DEPENDEES build
+      DEPENDERS build
     )
     ExternalProject_Add_Step( args-external args-copy-intermediate
       COMMAND ${CMAKE_COMMAND} -E copy_directory "${INTERMEDIATE_INSTALL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}"
@@ -147,14 +132,13 @@ if( PUMEX_DOWNLOAD_EXTERNAL_ASSIMP )
     GIT_REPOSITORY "https://github.com/assimp/assimp.git"
     GIT_TAG "v4.1.0"
     SOURCE_DIR "${ASSIMP_SOURCE_DIR}"
-    UPDATE_COMMAND ""
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INTERMEDIATE_INSTALL_DIR} -DASSIMP_BUILD_ASSIMP_TOOLS=off -DASSIMP_BUILD_TESTS=off -DCMAKE_DEBUG_POSTFIX=d
     UPDATE_DISCONNECTED TRUE
   )
   ExternalProject_Add_Step( assimp-external assimp-create-folders
     COMMAND ${CMAKE_COMMAND} -E make_directory "${ASSIMP_BUILD_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${ASSIMP_BUILD_DIR}/build"
-    DEPENDEES build
+    DEPENDERS build
   )
   ExternalProject_Add_Step( assimp-external assimp-copy-intermediate
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${INTERMEDIATE_INSTALL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}"
@@ -196,7 +180,7 @@ if( PUMEX_DOWNLOAD_EXTERNAL_FREETYPE )
   ExternalProject_Add_Step( freetype-external freetype-create-folders
     COMMAND ${CMAKE_COMMAND} -E make_directory "${FREETYPE_BUILD_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${FREETYPE_BUILD_DIR}/build"
-    DEPENDEES build
+    DEPENDERS build
   )
   ExternalProject_Add_Step( freetype-external freetype-copy-intermediate
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${INTERMEDIATE_INSTALL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}"
@@ -229,14 +213,13 @@ if( PUMEX_DOWNLOAD_EXTERNAL_TBB )
     STAMP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/stamp/tbb"
     GIT_REPOSITORY "https://github.com/wjakob/tbb.git"
     SOURCE_DIR "${TBB_SOURCE_DIR}"
-    UPDATE_COMMAND ""
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INTERMEDIATE_INSTALL_DIR} -DCMAKE_DEBUG_POSTFIX=_debug -DTBB_BUILD_TESTS=OFF
     UPDATE_DISCONNECTED TRUE
   )
   ExternalProject_Add_Step( tbb-external tbb-create-folders
     COMMAND ${CMAKE_COMMAND} -E make_directory "${TBB_BUILD_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${TBB_BUILD_DIR}/build"
-    DEPENDEES build
+    DEPENDERS build
   )
   ExternalProject_Add_Step( tbb-external tbb-copy-intermediate
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${INTERMEDIATE_INSTALL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}"
