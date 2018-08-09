@@ -1,0 +1,55 @@
+dist: trusty
+language: cpp
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - cmake # Install it temporarily.
+    - g++-7
+    - git
+    - graphviz
+    - libassimp-dev
+    - libglm-dev
+    - libmirclient-dev
+    - libpciaccess0
+    - libpng-dev
+    - libtbb-dev
+    - libwayland-dev
+    - libx11-dev
+    - libx11-xcb-dev
+    - libxcb-dri3-0
+    - libxcb-dri3-dev
+    - libxcb-present0
+    - libxrandr-dev
+    - make
+
+cache:
+  directories:
+  - VulkanSDK.cache
+  - CMake.cache
+
+install:
+  # Install VulkanSDK 1.1.82.0.
+  - if [ ! -e VulkanSDK.cache/vulkansdk.tar.gz ]; then wget -O VulkanSDK.cache/vulkansdk.tar.gz https://vulkan.lunarg.com/sdk/download/1.1.82.0/linux/vulkansdk-linux-x86_64-1.1.82.0.tar.gz; fi
+  - if [ ! -e VulkanSDK.cache/1.1.82.0 ]; then tar -xvzf VulkanSDK.cache/vulkansdk.tar.gz -C VulkanSDK.cache; fi
+  - if [ ! -e VulkanSDK.cache/1.1.82.0/x86_64/lib/libvulkan.so ]; then cd ./VulkanSDK.cache/1.1.82.0 && ./build_tools.sh; fi
+  - export VULKAN_SDK=$TRAVIS_BUILD_DIR/VulkanSDK.cache/1.1.82.0/x86_64
+  - export PATH=$VULKAN_SDK/bin:$PATH
+  # Install CMake 3.12.1.
+  - if [ ! -e CMake.cache/cmake.sh ]; then wget -O CMake.cache/cmake.sh https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.sh; fi
+  - if [ "$(cmake --version | head -n1 | cut -d' ' -f3)" != "3.12.1" ]; then chmod +x CMake.cache/cmake.sh && ./CMake.cache/cmake.sh --skip-license --prefix=CMake.cache; fi
+  - export PATH=$TRAVIS_BUILD_DIR/CMake.cache/bin:$PATH
+
+before_script:
+  - export CC=gcc-7
+  - export CXX=g++-7
+  # Debug.
+  - cmake --version
+  - make --version
+
+script:
+  - cd $TRAVIS_BUILD_DIR
+  - cmake .
+  - make; mkdir -p external/{assimp,glm,gli,args,tbb,freetype}/build; make -j 6

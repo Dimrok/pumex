@@ -1,7 +1,12 @@
-cmake_minimum_required(VERSION 3.7.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.9.0 FATAL_ERROR)
 
 project( PUMEX LANGUAGES CXX VERSION 0.2.0 )
+
 set( PUMEX_SOVERSION 1 )
+
+set( CMAKE_CXX_STANDARD 14 )
+set( CMAKE_CXX_STANDARD_REQUIRED ON )
+set( CMAKE_CXX_EXTENSIONS OFF )
 
 message( STATUS "Building PUMEX library version ${PUMEX_VERSION_MAJOR}.${PUMEX_VERSION_MINOR}.${PUMEX_VERSION_PATCH}" )
 
@@ -25,10 +30,6 @@ endif()
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules" )
-
-set( CMAKE_CXX_STANDARD 14 )
-set( CMAKE_CXX_STANDARD_REQUIRED ON )
-set( CMAKE_CXX_EXTENSIONS OFF )
 
 configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/include/pumex/Version.in"
@@ -215,6 +216,7 @@ add_dependencies( pumexlib pumexlib-shaders ${PUMEXLIB_EXTERNALS} )
 set_target_properties( pumexlib PROPERTIES VERSION ${PUMEX_VERSION} SOVERSION ${PUMEX_SOVERSION} )
 set_target_properties( pumexlib PROPERTIES RESOURCE "${PUMEXLIB_OUTPUT_SHADERS}" )
 target_link_libraries( pumexlib ${PUMEXLIB_LIBRARIES} )
+target_link_libraries( pumexlib ${assimp_LIBRARIES} )
 set_target_postfixes( pumexlib )
 
 if( PUMEX_BUILD_EXAMPLES )
