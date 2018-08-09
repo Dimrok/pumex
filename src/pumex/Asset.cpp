@@ -324,23 +324,23 @@ void Animation::calculateLocalTransforms(float time, glm::mat4* data, uint32_t s
 
 void Geometry::pushVertex(const VertexAccumulator& vertexAccumulator)
 {
-  vertices.insert(end(vertices), cbegin(vertexAccumulator.values), cend(vertexAccumulator.values));
+  vertices.insert(std::end(vertices), std::cbegin(vertexAccumulator.values), std::cend(vertexAccumulator.values));
 }
 
 void Geometry::setVertex(uint32_t position, const VertexAccumulator& vertexAccumulator)
 {
-  std::copy(begin(vertexAccumulator.values), end(vertexAccumulator.values), begin(vertices) + position );
+  std::copy(std::begin(vertexAccumulator.values), std::end(vertexAccumulator.values), std::begin(vertices) + position );
 }
 
 void Geometry::getVertex(uint32_t position, VertexAccumulator& vertexAccumulator)
 {
-  std::copy(begin(vertices) + position, begin(vertices) + position + vertexAccumulator.values.size(), begin(vertexAccumulator.values) );
+  std::copy(std::begin(vertices) + position, std::begin(vertices) + position + vertexAccumulator.values.size(), std::begin(vertexAccumulator.values) );
 }
 
 glm::vec4 Material::getProperty(const std::string& name, glm::vec4 defaultValue) const
 {
   auto it = properties.find(name);
-  if (it != end(properties))
+  if (it != std::end(properties))
     return it->second;
   else
     return defaultValue;
@@ -351,7 +351,7 @@ void copyAndConvertVertices(std::vector<float>& targetBuffer, const std::vector<
   // check if semantics are the same ( fast path )
   if (targetSemantic == sourceSemantic)
   {
-    std::copy(begin(sourceBuffer), end(sourceBuffer), std::back_inserter(targetBuffer));
+    std::copy(std::begin(sourceBuffer), std::end(sourceBuffer), std::back_inserter(targetBuffer));
     return;
   }
   // semantics are different - we need to do remapping
@@ -360,7 +360,7 @@ void copyAndConvertVertices(std::vector<float>& targetBuffer, const std::vector<
   std::vector<uint32_t> sourceValuesIndex( calcVertexSize(targetSemantic) );
 
   // setup default values
-  std::fill(begin(defaultValues), end(defaultValues), 0.0f);
+  std::fill(std::begin(defaultValues), std::end(defaultValues), 0.0f);
   uint32_t offset=0;
   for (const auto& t : targetSemantic)
   {
@@ -395,7 +395,7 @@ void copyAndConvertVertices(std::vector<float>& targetBuffer, const std::vector<
   // setup remapping
   offset = 0;
 
-  std::fill(begin(sourceValuesIndex), end(sourceValuesIndex), std::numeric_limits<uint32_t>::max());
+  std::fill(std::begin(sourceValuesIndex), std::end(sourceValuesIndex), std::numeric_limits<uint32_t>::max());
   uint32_t currentTargetColor    = 0;
   uint32_t currentTargetTexCoord = 0;
   for (const auto& t : targetSemantic)
@@ -443,7 +443,7 @@ void copyAndConvertVertices(std::vector<float>& targetBuffer, const std::vector<
       if (sourceValuesIndex[j] != std::numeric_limits<uint32_t>::max())
         targetValues[j] = sourceBuffer[i + sourceValuesIndex[j]];
     }
-    std::copy(begin(targetValues), end(targetValues), std::back_inserter(targetBuffer));
+    std::copy(std::begin(targetValues), std::end(targetValues), std::back_inserter(targetBuffer));
   }
 }
 
@@ -524,11 +524,11 @@ void mergeAsset(Asset& parentAsset, uint32_t parentBone, Asset& childAsset)
   }
 
   // copy materials
-  std::copy(begin(childAsset.materials), end(childAsset.materials), std::back_inserter(parentAsset.materials));
+  std::copy(std::begin(childAsset.materials), std::end(childAsset.materials), std::back_inserter(parentAsset.materials));
 
   // copy geometries. Update bone weights and material indices
-  std::copy(begin(childAsset.geometries), end(childAsset.geometries), std::back_inserter(parentAsset.geometries));
-  for (auto git = begin(parentAsset.geometries) + parentGeometryCount; git != end(parentAsset.geometries); ++git)
+  std::copy(std::begin(childAsset.geometries), std::end(childAsset.geometries), std::back_inserter(parentAsset.geometries));
+  for (auto git = std::begin(parentAsset.geometries) + parentGeometryCount; git != std::end(parentAsset.geometries); ++git)
   {
     git->materialIndex = git->materialIndex + parentMaterialCount;
 
@@ -661,7 +661,7 @@ BoundingBox calculateBoundingBox(const Skeleton& skeleton, const Animation& anim
       glm::mat4 globalParentTransform = std::get<1>(boneData);
       glm::mat4 localCurrentTransform = skeleton.bones[boneIndex].localTransformation;
       auto it = animation.invChannelNames.find(skeleton.boneNames[boneIndex]);
-      if (it != end(animation.invChannelNames))
+      if (it != std::end(animation.invChannelNames))
         localCurrentTransform = localTransforms[it->second];
       glm::mat4 globalCurrentTransform = globalParentTransform * localCurrentTransform;
       glm::mat4 targetMatrix = skeleton.invGlobalTransform * globalCurrentTransform;

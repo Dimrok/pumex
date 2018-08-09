@@ -116,10 +116,10 @@ protected:
   std::unordered_map<uint32_t, std::shared_ptr<DescriptorSet>> descriptorSets;
   bool                                                         secondaryBufferPresent = false;
 public:
-  inline decltype(begin(descriptorSets))  descriptorSetBegin()       { return begin(descriptorSets); }
-  inline decltype(end(descriptorSets))    descriptorSetEnd()         { return end(descriptorSets); }
-  inline decltype(cbegin(descriptorSets)) descriptorSetBegin() const { return cbegin(descriptorSets); }
-  inline decltype(cend(descriptorSets))   descriptorSetEnd() const   { return cend(descriptorSets); }
+  inline decltype(std::begin(descriptorSets))  descriptorSetBegin()       { return std::begin(descriptorSets); }
+  inline decltype(std::end(descriptorSets))    descriptorSetEnd()         { return std::end(descriptorSets); }
+  inline decltype(std::cbegin(descriptorSets)) descriptorSetBegin() const { return std::cbegin(descriptorSets); }
+  inline decltype(std::cend(descriptorSets))   descriptorSetEnd() const   { return std::cend(descriptorSets); }
 };
 
 // Node class that may have children

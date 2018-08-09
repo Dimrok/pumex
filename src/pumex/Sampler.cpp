@@ -56,17 +56,17 @@ void Sampler::setSamplerTraits(const SamplerTraits& st)
 
 void Sampler::addResourceOwner(std::shared_ptr<Resource> resource)
 {
-  if (std::find_if(begin(resourceOwners), end(resourceOwners), [&resource](std::weak_ptr<Resource> r) { return !r.expired() && r.lock().get() == resource.get(); }) == end(resourceOwners))
+  if (std::find_if(std::begin(resourceOwners), std::end(resourceOwners), [&resource](std::weak_ptr<Resource> r) { return !r.expired() && r.lock().get() == resource.get(); }) == std::end(resourceOwners))
     resourceOwners.push_back(resource);
 }
 
 void Sampler::invalidateDescriptors()
 {
   // inform all owners that they need to invalidated
-  auto eit = std::remove_if(begin(resourceOwners), end(resourceOwners), [](std::weak_ptr<Resource> r) { return r.expired();  });
-  for (auto it = begin(resourceOwners); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(resourceOwners), std::end(resourceOwners), [](std::weak_ptr<Resource> r) { return r.expired();  });
+  for (auto it = std::begin(resourceOwners); it != eit; ++it)
     it->lock()->invalidateDescriptors();
-  resourceOwners.erase(eit, end(resourceOwners));
+  resourceOwners.erase(eit, std::end(resourceOwners));
   // notify sampler's own descriptors
   Resource::invalidateDescriptors();
 }
@@ -74,10 +74,10 @@ void Sampler::invalidateDescriptors()
 void Sampler::notifyDescriptors(const RenderContext& renderContext)
 {
   // inform all owners about crucial sampler changes
-  auto eit = std::remove_if(begin(resourceOwners), end(resourceOwners), [](std::weak_ptr<Resource> r) { return r.expired();  });
-  for (auto it = begin(resourceOwners); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(resourceOwners), std::end(resourceOwners), [](std::weak_ptr<Resource> r) { return r.expired();  });
+  for (auto it = std::begin(resourceOwners); it != eit; ++it)
     it->lock()->notifyDescriptors(renderContext);
-  resourceOwners.erase(eit, end(resourceOwners));
+  resourceOwners.erase(eit, std::end(resourceOwners));
   // notify sampler's own descriptors
   Resource::notifyDescriptors(renderContext);
 }
@@ -87,7 +87,7 @@ VkSampler Sampler::getHandleSampler(const RenderContext& renderContext) const
   std::lock_guard<std::mutex> lock(mutex);
   auto keyValue = getKeyID(renderContext, perObjectBehaviour);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return VK_NULL_HANDLE;
   return pddit->second.data[renderContext.activeIndex % activeCount].sampler;
 }
@@ -108,7 +108,7 @@ void Sampler::validate(const RenderContext& renderContext)
   }
   auto keyValue = getKeyID(renderContext, perObjectBehaviour);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, SamplerData(renderContext, swapChainImageBehaviour) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -149,7 +149,7 @@ DescriptorValue Sampler::getDescriptorValue(const RenderContext& renderContext)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(getKeyID(renderContext,perObjectBehaviour));
-  CHECK_LOG_THROW(pddit == end(perObjectData), "Sampler::getDescriptorValue() : sampler  was not validated");
+  CHECK_LOG_THROW(pddit == std::end(perObjectData), "Sampler::getDescriptorValue() : sampler  was not validated");
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   return DescriptorValue(pddit->second.data[activeIndex].sampler, VK_NULL_HANDLE, VK_IMAGE_LAYOUT_UNDEFINED);
 }

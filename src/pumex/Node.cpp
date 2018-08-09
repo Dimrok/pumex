@@ -72,8 +72,8 @@ void Node::addParent(std::shared_ptr<Group> parent)
 
 void Node::removeParent(std::shared_ptr<Group> parent)
 {
-  auto it = std::find_if(begin(parents), end(parents), [parent](std::weak_ptr<Group> p) -> bool { return p.lock() == parent; });
-  if (it != end(parents))
+  auto it = std::find_if(std::begin(parents), std::end(parents), [parent](std::weak_ptr<Group> p) -> bool { return p.lock() == parent; });
+  if (it != std::end(parents))
     parents.erase(it);
 }
 
@@ -99,7 +99,7 @@ void Node::resetDescriptorSet(uint32_t index)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto it = descriptorSets.find(index);
-  if (it == end(descriptorSets))
+  if (it == std::end(descriptorSets))
     return;
   it->second->removeNode(std::dynamic_pointer_cast<Node>(shared_from_this()));
   descriptorSets.erase(it);
@@ -110,7 +110,7 @@ std::shared_ptr<DescriptorSet> Node::getDescriptorSet(uint32_t index)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto it = descriptorSets.find(index);
-  if (it == end(descriptorSets))
+  if (it == std::end(descriptorSets))
     return std::shared_ptr<DescriptorSet>();
   return it->second;
 }
@@ -126,7 +126,7 @@ bool Node::nodeValidate(const RenderContext& renderContext)
   }
   auto keyValue = getKeyID(renderContext, pbPerSurface);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, NodeData(renderContext, swForEachImage) }).first;
   if (secondaryBufferPresent && pddit->second.commonData.secondaryCommandPool==nullptr)
   {
@@ -148,7 +148,7 @@ void Node::setChildNodesValid(const RenderContext& renderContext)
 {
   auto keyValue = getKeyID(renderContext, pbPerSurface);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   pddit->second.data[activeIndex].childNodesValid = true;
@@ -172,7 +172,7 @@ void Node::invalidateNodeAndParents(Surface* surface)
       pdd.second.resize(activeCount);
   }
   auto pddit = perObjectData.find(surface->getID());
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ surface->getID(), NodeData(surface->device.lock()->device, surface->surface, activeCount, swForEachImage) }).first;
   if (secondaryBufferPresent && pddit->second.commonData.secondaryCommandPool==nullptr)
   {
@@ -206,7 +206,7 @@ void Node::invalidateDescriptorsAndParents(Surface* surface)
       pdd.second.resize(activeCount);
   }
   auto pddit = perObjectData.find(surface->getID());
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ surface->getID(), NodeData(surface->device.lock()->device, surface->surface, activeCount, swForEachImage) }).first;
   if (secondaryBufferPresent && pddit->second.commonData.secondaryCommandPool == nullptr)
   {
@@ -243,7 +243,7 @@ std::shared_ptr<CommandBuffer> Node::getSecondaryBuffer(const RenderContext& ren
   }
   auto keyValue = getKeyID(renderContext, pbPerSurface);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, NodeData(renderContext, swForEachImage) }).first;
   if (secondaryBufferPresent && pddit->second.commonData.secondaryCommandPool == nullptr)
   {
@@ -265,7 +265,7 @@ std::shared_ptr<CommandPool> Node::getSecondaryCommandPool(const RenderContext& 
   }
   auto keyValue = getKeyID(renderContext, pbPerSurface);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, NodeData(renderContext, swForEachImage) }).first;
   if (secondaryBufferPresent && pddit->second.commonData.secondaryCommandPool == nullptr)
   {
@@ -309,7 +309,7 @@ void Node::invalidateParentsNode(Surface* surface)
       pdd.second.resize(activeCount);
   }
   auto pddit = perObjectData.find(surface->getID());
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ surface->getID(), NodeData(surface->device.lock()->device, surface->surface, activeCount, swForEachImage) }).first;
   if (secondaryBufferPresent && pddit->second.commonData.secondaryCommandPool == nullptr)
   {
@@ -361,7 +361,7 @@ void Node::invalidateParentsDescriptor(Surface* surface)
       pdd.second.resize(activeCount);
   }
   auto pddit = perObjectData.find(surface->getID());
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ surface->getID(), NodeData(surface->device.lock()->device, surface->surface, activeCount, swForEachImage) }).first;
   if (secondaryBufferPresent && pddit->second.commonData.secondaryCommandPool == nullptr)
   {

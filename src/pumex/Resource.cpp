@@ -67,8 +67,8 @@ void Resource::addDescriptor(std::shared_ptr<Descriptor> descriptor)
 
 void Resource::removeDescriptor(std::shared_ptr<Descriptor> descriptor)
 {
-  auto it = std::find_if(begin(descriptors), end(descriptors), [descriptor](std::weak_ptr<Descriptor> p) -> bool { return p.lock() == descriptor; });
-  if (it != end(descriptors))
+  auto it = std::find_if(std::begin(descriptors), std::end(descriptors), [descriptor](std::weak_ptr<Descriptor> p) -> bool { return p.lock() == descriptor; });
+  if (it != std::end(descriptors))
     descriptors.erase(it);
 }
 

@@ -45,7 +45,7 @@ void PipelineLayout::validate(const RenderContext& renderContext)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perDeviceData.find(renderContext.vkDevice);
-  if (pddit != end(perDeviceData))
+  if (pddit != std::end(perDeviceData))
     return;
   pddit = perDeviceData.insert( { renderContext.vkDevice, PerDeviceData()}).first;
 
@@ -66,7 +66,7 @@ VkPipelineLayout PipelineLayout::getHandle(VkDevice device) const
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perDeviceData.find(device);
-  if (pddit == end(perDeviceData))
+  if (pddit == std::end(perDeviceData))
     return VK_NULL_HANDLE;
   return pddit->second.pipelineLayout;
 }
@@ -85,7 +85,7 @@ void PipelineCache::validate(const RenderContext& renderContext)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perDeviceData.find(renderContext.vkDevice);
-  if (pddit != end(perDeviceData))
+  if (pddit != std::end(perDeviceData))
     return;
   pddit = perDeviceData.insert({ renderContext.vkDevice,PerDeviceData()}).first;
 
@@ -98,7 +98,7 @@ VkPipelineCache PipelineCache::getHandle(VkDevice device) const
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perDeviceData.find(device);
-  if (pddit == end(perDeviceData))
+  if (pddit == std::end(perDeviceData))
     return VK_NULL_HANDLE;
   return pddit->second.pipelineCache;
 }
@@ -125,7 +125,7 @@ ShaderModule::~ShaderModule()
 void ShaderModule::validate(const RenderContext& renderContext)
 {
   auto pddit = perDeviceData.find(renderContext.vkDevice);
-  if (pddit != end(perDeviceData))
+  if (pddit != std::end(perDeviceData))
     return;
   pddit = perDeviceData.insert({ renderContext.vkDevice, PerDeviceData() }).first;
 
@@ -139,7 +139,7 @@ void ShaderModule::validate(const RenderContext& renderContext)
 VkShaderModule ShaderModule::getHandle(VkDevice device) const
 {
   auto pddit = perDeviceData.find(device);
-  if (pddit == end(perDeviceData))
+  if (pddit == std::end(perDeviceData))
     return VK_NULL_HANDLE;
   return pddit->second.shaderModule;
 }
@@ -235,7 +235,7 @@ void GraphicsPipeline::validate(const RenderContext& renderContext)
   }
   auto keyValue = getKeyID(renderContext, pbPerDevice);
   auto pddit = perDeviceData.find(keyValue);
-  if (pddit == cend(perDeviceData))
+  if (pddit == std::cend(perDeviceData))
     pddit = perDeviceData.insert({ keyValue, PipelineData(renderContext, swForEachImage) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -458,7 +458,7 @@ void ComputePipeline::validate(const RenderContext& renderContext)
   }
   auto keyValue = getKeyID(renderContext, pbPerDevice);
   auto pddit = perDeviceData.find(keyValue);
-  if (pddit == cend(perDeviceData))
+  if (pddit == std::cend(perDeviceData))
     pddit = perDeviceData.insert({ keyValue, PipelineData(renderContext, swForEachImage) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -483,4 +483,3 @@ void ComputePipeline::validate(const RenderContext& renderContext)
   // we have a new compute pipeline so we must invalidate command buffers
   notifyCommandBuffers();
 }
-

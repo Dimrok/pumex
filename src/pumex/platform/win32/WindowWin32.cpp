@@ -344,9 +344,9 @@ void WindowWin32::unregisterWindow(HWND hwnd)
 WindowWin32* WindowWin32::getWindow(HWND hwnd)
 {
   auto it = registeredWindows.find(hwnd);
-  if (it == end(registeredWindows))
+  if (it == std::end(registeredWindows))
     it = registeredWindows.find(nullptr);
-  if (it == end(registeredWindows))
+  if (it == std::end(registeredWindows))
     return nullptr;
   return it->second;
 }
@@ -354,7 +354,7 @@ WindowWin32* WindowWin32::getWindow(HWND hwnd)
 InputEvent::Key WindowWin32::win32KeyCodeToPumex(WPARAM keycode) const
 {
   auto it = win32Keycodes.find(keycode);
-  if(it != end(win32Keycodes) )
+  if(it != std::end(win32Keycodes) )
     return it->second;
 //  LOG_ERROR << "Unknown keycode : 0x" << std::hex << (uint32_t)keycode << std::endl;
   return InputEvent::KEY_UNDEFINED;

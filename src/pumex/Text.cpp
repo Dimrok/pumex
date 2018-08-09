@@ -88,7 +88,7 @@ void Font::addSymbolData(const glm::vec2& startPosition, const glm::vec4& color,
 size_t Font::getGlyphIndex(wchar_t charCode)
 {
   auto it = registeredGlyphs.find(charCode);
-  if ( it != end(registeredGlyphs))
+  if ( it != std::end(registeredGlyphs))
     return it->second;
 
   // load glyph from freetype
@@ -155,7 +155,7 @@ void Text::validate(const RenderContext& renderContext)
   }
 
   auto sit = symbolData.find(renderContext.vkSurface);
-  if (sit == end(symbolData))
+  if (sit == std::end(symbolData))
     sit = symbolData.insert({ renderContext.vkSurface, std::make_shared<std::vector<SymbolData>>() }).first;
 
   uint32_t oldDataSize = sit->second->size();
@@ -180,7 +180,7 @@ void Text::cmdDraw(const RenderContext& renderContext, CommandBuffer* commandBuf
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto sit = symbolData.find(renderContext.vkSurface);
-  CHECK_LOG_THROW(sit == end(symbolData), "Text::cmdDraw() : text was not validated");
+  CHECK_LOG_THROW(sit == std::end(symbolData), "Text::cmdDraw() : text was not validated");
   if (sit->second.get() == nullptr || sit->second->empty())
     return;
 

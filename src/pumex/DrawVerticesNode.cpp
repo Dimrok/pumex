@@ -45,7 +45,7 @@ void DrawVerticesNode::setVertexIndexData(Surface* surface, const std::vector<fl
   vertexBuffer->setData(surface, vertices);
   indexBuffer->setData(surface, indices);
   auto it = indexCount.find(surface->getID());
-  if (it == end(indexCount) || it->second != indices.size())
+  if (it == std::end(indexCount) || it->second != indices.size())
     notifyCommandBuffers();
   indexCount[surface->getID()] = indices.size();
   invalidateNodeAndParents(surface);
@@ -57,7 +57,7 @@ void DrawVerticesNode::setVertexIndexData(Device* device, const std::vector<floa
   vertexBuffer->setData(device, vertices);
   indexBuffer->setData(device, indices);
   auto it = indexCount.find(device->getID());
-  if (it == end(indexCount) || it->second != indices.size())
+  if (it == std::end(indexCount) || it->second != indices.size())
     notifyCommandBuffers();
   indexCount[device->getID()] = indices.size();
   invalidateNodeAndParents();
@@ -99,13 +99,13 @@ void DrawVerticesNode::cmdDraw(const RenderContext& renderContext, CommandBuffer
   if (vertexBuffer->getPerObjectBehaviour() == pbPerSurface)
   {
     auto it = indexCount.find(renderContext.surface->getID());
-    if (it != end(indexCount))
+    if (it != std::end(indexCount))
       currentIndexCount = it->second;
   }
   else
   {
     auto it = indexCount.find(renderContext.device->getID());
-    if (it != end(indexCount))
+    if (it != std::end(indexCount))
       currentIndexCount = it->second;
   }
   commandBuffer->cmdDrawIndexed(currentIndexCount, 1, 0, 0, 0);

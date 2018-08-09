@@ -66,7 +66,7 @@ DeviceMemoryBlock DeviceMemoryAllocator::allocate(Device* device, VkMemoryRequir
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perDeviceData.find(device->device);
-  if (pddit == end(perDeviceData))
+  if (pddit == std::end(perDeviceData))
     pddit = perDeviceData.insert({ device->device, PerDeviceData() }).first;
   if (pddit->second.storageMemory == VK_NULL_HANDLE)
   {
@@ -84,7 +84,7 @@ void DeviceMemoryAllocator::deallocate(VkDevice device, const DeviceMemoryBlock&
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perDeviceData.find(device);
-  CHECK_LOG_THROW(pddit == end(perDeviceData), "Cannot deallocate memory - device memory was never allocated");
+  CHECK_LOG_THROW(pddit == std::end(perDeviceData), "Cannot deallocate memory - device memory was never allocated");
   allocationStrategy->deallocate(pddit->second.freeBlocks, block);
 }
 
@@ -94,7 +94,7 @@ void DeviceMemoryAllocator::copyToDeviceMemory(Device* device, VkDeviceSize offs
     return;
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perDeviceData.find(device->device);
-  CHECK_LOG_THROW(pddit == end(perDeviceData), "DeviceMemoryAllocator::copyToDeviceMemory() : cannot copy to memory that not have been allocated yet");
+  CHECK_LOG_THROW(pddit == std::end(perDeviceData), "DeviceMemoryAllocator::copyToDeviceMemory() : cannot copy to memory that not have been allocated yet");
   uint8_t *pData;
   VK_CHECK_LOG_THROW(vkMapMemory(device->device, pddit->second.storageMemory, offset, size, 0, (void **)&pData), "Cannot map memory");
   std::memcpy(pData, data, size);
@@ -105,7 +105,7 @@ void DeviceMemoryAllocator::bindBufferMemory(Device* device, VkBuffer buffer, Vk
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perDeviceData.find(device->device);
-  CHECK_LOG_THROW(pddit == end(perDeviceData), "DeviceMemoryAllocator::bindBufferMemory() : cannot bind memory that not have been allocated yet");
+  CHECK_LOG_THROW(pddit == std::end(perDeviceData), "DeviceMemoryAllocator::bindBufferMemory() : cannot bind memory that not have been allocated yet");
   VK_CHECK_LOG_THROW(vkBindBufferMemory(device->device, buffer, pddit->second.storageMemory, offset), "Cannot bind memory to buffer");
 }
 
@@ -119,16 +119,16 @@ FirstFitAllocationStrategy::~FirstFitAllocationStrategy()
 
 DeviceMemoryBlock FirstFitAllocationStrategy::allocate(VkDeviceMemory storageMemory, std::list<FreeBlock>& freeBlocks, VkMemoryRequirements memoryRequirements)
 {
-  auto it = begin(freeBlocks);
+  auto it = std::begin(freeBlocks);
   VkDeviceSize additionalSize;
-  for (; it != end(freeBlocks); ++it)
+  for (; it != std::end(freeBlocks); ++it)
   {
     VkDeviceSize modd = it->offset % memoryRequirements.alignment;
     additionalSize = (modd == 0) ? 0 : memoryRequirements.alignment - modd;
     if (it->size >= memoryRequirements.size + additionalSize)
       break;
   }
-  CHECK_LOG_THROW(it == end(freeBlocks), "memory allocation failed : " << memoryRequirements.size);
+  CHECK_LOG_THROW(it == std::end(freeBlocks), "memory allocation failed : " << memoryRequirements.size);
 
   DeviceMemoryBlock block(storageMemory, it->offset, it->offset + additionalSize, memoryRequirements.size, memoryRequirements.size + additionalSize);
   it->offset += memoryRequirements.size + additionalSize;
@@ -147,8 +147,8 @@ void FirstFitAllocationStrategy::deallocate(std::list<FreeBlock>& freeBlocks, co
     return;
   }
 
-  auto it = begin(freeBlocks);
-  for (; it != end(freeBlocks); ++it)
+  auto it = std::begin(freeBlocks);
+  for (; it != std::end(freeBlocks); ++it)
   {
     // check if a new block lies before an existing block
     if (it->offset >= fBlock.offset + fBlock.size)
@@ -161,7 +161,7 @@ void FirstFitAllocationStrategy::deallocate(std::list<FreeBlock>& freeBlocks, co
       }
       else
         it = freeBlocks.insert(it, fBlock);
-      if (it == begin(freeBlocks))
+      if (it == std::begin(freeBlocks))
         return;
       it--;
       break;
@@ -173,7 +173,7 @@ void FirstFitAllocationStrategy::deallocate(std::list<FreeBlock>& freeBlocks, co
       break;
     }
   }
-  if (it == end(freeBlocks))
+  if (it == std::end(freeBlocks))
   {
     freeBlocks.push_back(fBlock);
     return;
@@ -181,7 +181,7 @@ void FirstFitAllocationStrategy::deallocate(std::list<FreeBlock>& freeBlocks, co
   // check if it may be coalesced to the next block
   auto nit = it;
   ++nit;
-  if (nit != end(freeBlocks) && ((it->offset + it->size) == nit->offset))
+  if (nit != std::end(freeBlocks) && ((it->offset + it->size) == nit->offset))
   {
     it->size += nit->size;
     freeBlocks.erase(nit);

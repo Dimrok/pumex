@@ -43,7 +43,7 @@ void QueryPool::validate(Surface* surface)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perSurfaceData.find(surface->surface);
-  if (pddit != end(perSurfaceData))
+  if (pddit != std::end(perSurfaceData))
     return;
   pddit = perSurfaceData.insert({ surface->surface, PerSurfaceData(surface->device.lock()->device) }).first;
 
@@ -59,7 +59,7 @@ void QueryPool::reset(Surface* surface, std::shared_ptr<CommandBuffer> cmdBuffer
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perSurfaceData.find(surface->surface);
-  CHECK_LOG_THROW(pddit == end(perSurfaceData), "Query pool was not validated before resetting");
+  CHECK_LOG_THROW(pddit == std::end(perSurfaceData), "Query pool was not validated before resetting");
   if (firstQuery == 0 && queryCount == 0)
     queryCount = poolSize;
   vkCmdResetQueryPool(cmdBuffer->getHandle(), pddit->second.queryPool, firstQuery, queryCount);
@@ -69,7 +69,7 @@ void QueryPool::beginQuery(Surface* surface, std::shared_ptr<CommandBuffer> cmdB
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perSurfaceData.find(surface->surface);
-  CHECK_LOG_THROW(pddit == end(perSurfaceData), "Query pool was not validated before beginQuery");
+  CHECK_LOG_THROW(pddit == std::end(perSurfaceData), "Query pool was not validated before beginQuery");
   vkCmdBeginQuery(cmdBuffer->getHandle(), pddit->second.queryPool, query, controlFlags);
 }
 
@@ -77,7 +77,7 @@ void QueryPool::endQuery(Surface* surface, std::shared_ptr<CommandBuffer> cmdBuf
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perSurfaceData.find(surface->surface);
-  CHECK_LOG_THROW(pddit == end(perSurfaceData), "Query pool was not validated before endQuery");
+  CHECK_LOG_THROW(pddit == std::end(perSurfaceData), "Query pool was not validated before endQuery");
   vkCmdEndQuery(cmdBuffer->getHandle(), pddit->second.queryPool, query);
 }
 
@@ -85,7 +85,7 @@ void QueryPool::queryTimeStamp(Surface* surface, std::shared_ptr<CommandBuffer> 
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perSurfaceData.find(surface->surface);
-  CHECK_LOG_THROW(pddit == end(perSurfaceData), "Query pool was not validated before queryTimeStamp()");
+  CHECK_LOG_THROW(pddit == std::end(perSurfaceData), "Query pool was not validated before queryTimeStamp()");
   vkCmdWriteTimestamp(cmdBuffer->getHandle(), pipelineStage, pddit->second.queryPool, query);
 }
 
@@ -93,7 +93,7 @@ std::vector<uint64_t> QueryPool::getResults(Surface* surface, uint32_t firstQuer
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perSurfaceData.find(surface->surface);
-  CHECK_LOG_THROW(pddit == end(perSurfaceData), "Query pool was not validated before getting the results");
+  CHECK_LOG_THROW(pddit == std::end(perSurfaceData), "Query pool was not validated before getting the results");
 
   if (firstQuery == 0 && queryCount == 0)
     queryCount = poolSize;

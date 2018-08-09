@@ -432,7 +432,7 @@ std::vector<uint32_t> Viewer::getDeviceIDs() const
 Device*  Viewer::getDevice(uint32_t id)
 {
   auto it = devices.find(id);
-  if (it == end(devices))
+  if (it == std::end(devices))
     return nullptr;
   return it->second.get();
 }
@@ -448,20 +448,20 @@ std::vector<uint32_t> Viewer::getSurfaceIDs() const
 Surface* Viewer::getSurface(uint32_t id)
 {
   auto it = surfaces.find(id);
-  if (it == end(surfaces))
+  if (it == std::end(surfaces))
     return nullptr;
   return it->second.get();
 }
 
 void Viewer::addInputEventHandler(std::shared_ptr<InputEventHandler> eventHandler)
 {
-  inputEventHandlers.erase(std::remove_if(begin(inputEventHandlers), end(inputEventHandlers), [&](std::shared_ptr<InputEventHandler> ie) { return ie.get() == eventHandler.get();  }), end(inputEventHandlers));
+  inputEventHandlers.erase(std::remove_if(std::begin(inputEventHandlers), std::end(inputEventHandlers), [&](std::shared_ptr<InputEventHandler> ie) { return ie.get() == eventHandler.get();  }), std::end(inputEventHandlers));
   inputEventHandlers.push_back(eventHandler);
 }
 
 void Viewer::removeInputEventHandler(std::shared_ptr<InputEventHandler> eventHandler)
 {
-  inputEventHandlers.erase(std::remove_if(begin(inputEventHandlers), end(inputEventHandlers), [&](std::shared_ptr<InputEventHandler> ie) { return ie.get() == eventHandler.get();  }), end(inputEventHandlers));
+  inputEventHandlers.erase(std::remove_if(std::begin(inputEventHandlers), std::end(inputEventHandlers), [&](std::shared_ptr<InputEventHandler> ie) { return ie.get() == eventHandler.get();  }), std::end(inputEventHandlers));
 }
 
 void Viewer::addDefaultDirectory(const filesystem::path & directory)
@@ -473,7 +473,7 @@ void Viewer::addDefaultDirectory(const filesystem::path & directory)
     return;
 //  CHECK_LOG_RETURN_VOID(ec.value() != 0, "Viewer::addDefaultDirectory() : Cannot create cannonical path from " << directory << " Error message : " << ec.message());
   // skip directory if it already exists in defaultDirectories
-  if (std::find(begin(defaultDirectories), end(defaultDirectories), canonicalPath) != end(defaultDirectories))
+  if (std::find(std::begin(defaultDirectories), std::end(defaultDirectories), canonicalPath) != std::end(defaultDirectories))
     return;
   // skip it if it's not a directory ( it may not even exist on disk )
   if (!filesystem::is_directory(canonicalPath))
@@ -613,10 +613,10 @@ void Viewer::handleInputEvents()
   for (auto& window : windows)
   {
     std::vector<InputEvent> windowInputEvents = window->getInputEvents();
-    inputEvents.insert(end(inputEvents), begin(windowInputEvents), end(windowInputEvents));
+    inputEvents.insert(std::end(inputEvents), std::begin(windowInputEvents), std::end(windowInputEvents));
   }
   // sort input events by event time
-  std::sort(begin(inputEvents), end(inputEvents), [](const InputEvent& lhs, const InputEvent& rhs) { return lhs.time < rhs.time; });
+  std::sort(std::begin(inputEvents), std::end(inputEvents), [](const InputEvent& lhs, const InputEvent& rhs) { return lhs.time < rhs.time; });
   // handle inputEvents using inputEventHandlers
   for (const auto& inputEvent : inputEvents)
   {
@@ -696,7 +696,7 @@ void Viewer::buildRenderGraph()
 
     {
       auto jit = opSurfaceValidatePrimaryNodes.find(surface);
-      if (jit == end(opSurfaceValidatePrimaryNodes))
+      if (jit == std::end(opSurfaceValidatePrimaryNodes))
         jit = opSurfaceValidatePrimaryNodes.insert({ surface, std::vector<tbb::flow::continue_node<tbb::flow::continue_msg>>() }).first;
       for (uint32_t i = 0; i < surface->queues.size(); ++i)
       {
@@ -718,7 +718,7 @@ void Viewer::buildRenderGraph()
     }
     {
       auto jit = opSurfaceValidatePrimaryDescriptors.find(surface);
-      if (jit == end(opSurfaceValidatePrimaryDescriptors))
+      if (jit == std::end(opSurfaceValidatePrimaryDescriptors))
         jit = opSurfaceValidatePrimaryDescriptors.insert({ surface, std::vector<tbb::flow::continue_node<tbb::flow::continue_msg>>() }).first;
       for (uint32_t i = 0; i < surface->queues.size(); ++i)
       {
@@ -740,7 +740,7 @@ void Viewer::buildRenderGraph()
     }
     {
       auto jit = opSurfacePrimaryBuffers.find(surface);
-      if (jit == end(opSurfacePrimaryBuffers))
+      if (jit == std::end(opSurfacePrimaryBuffers))
         jit = opSurfacePrimaryBuffers.insert({ surface, std::vector<tbb::flow::continue_node<tbb::flow::continue_msg>>() }).first;
       for (uint32_t i = 0; i < surface->queues.size(); ++i)
       {
@@ -864,7 +864,7 @@ void Viewer::buildRenderGraph()
     tbb::flow::make_edge(opSurfaceValidateSecondaryDescriptors[i], opSurfaceSecondaryCommandBuffers[i]);
 
     auto jit0 = opSurfaceValidatePrimaryNodes.find(surfacePointers[i]);
-    if (jit0 == end(opSurfaceValidatePrimaryNodes) || jit0->second.size() == 0)
+    if (jit0 == std::end(opSurfaceValidatePrimaryNodes) || jit0->second.size() == 0)
     {
       // no primary command buffer building ? Maybe we should throw an error ?
       tbb::flow::make_edge(opSurfaceValidateWorkflow[i], opSurfaceSecondaryCommandBuffers[i]);

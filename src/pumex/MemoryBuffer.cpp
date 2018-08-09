@@ -73,7 +73,7 @@ VkBuffer MemoryBuffer::getHandleBuffer(const RenderContext& renderContext) const
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(getKeyID(renderContext, perObjectBehaviour));
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return VK_NULL_HANDLE;
   return pddit->second.data[renderContext.activeIndex % activeCount].buffer;
 }
@@ -82,7 +82,7 @@ size_t MemoryBuffer::getDataSizeRC(const RenderContext& renderContext) const
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(getKeyID(renderContext, perObjectBehaviour));
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return 0;
   return pddit->second.data[renderContext.activeIndex % activeCount].dataSize;
 }
@@ -102,7 +102,7 @@ void MemoryBuffer::validate(const RenderContext& renderContext)
   }
   auto keyValue = getKeyID(renderContext, perObjectBehaviour);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, MemoryBufferData(renderContext, swapChainImageBehaviour) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -163,55 +163,55 @@ void MemoryBuffer::validate(const RenderContext& renderContext)
 
 void MemoryBuffer::addCommandBufferSource(std::shared_ptr<CommandBufferSource> cbSource)
 {
-  if (std::find_if(begin(commandBufferSources), end(commandBufferSources), [&cbSource](std::weak_ptr<CommandBufferSource> cbs) { return !cbs.expired() && cbs.lock().get() == cbSource.get(); }) == end(commandBufferSources))
+  if (std::find_if(std::begin(commandBufferSources), std::end(commandBufferSources), [&cbSource](std::weak_ptr<CommandBufferSource> cbs) { return !cbs.expired() && cbs.lock().get() == cbSource.get(); }) == std::end(commandBufferSources))
     commandBufferSources.push_back(cbSource);
 }
 
 void MemoryBuffer::notifyCommandBufferSources(const RenderContext& renderContext)
 {
-  auto eit = std::remove_if(begin(commandBufferSources), end(commandBufferSources), [](std::weak_ptr<CommandBufferSource> r) { return r.expired();  });
-  for (auto it = begin(commandBufferSources); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(commandBufferSources), std::end(commandBufferSources), [](std::weak_ptr<CommandBufferSource> r) { return r.expired();  });
+  for (auto it = std::begin(commandBufferSources); it != eit; ++it)
     it->lock()->notifyCommandBuffers(renderContext.activeIndex);
-  commandBufferSources.erase(eit, end(commandBufferSources));
+  commandBufferSources.erase(eit, std::end(commandBufferSources));
 }
 
 void MemoryBuffer::addResource(std::shared_ptr<Resource> resource)
 {
   std::lock_guard<std::mutex> lock(mutex);
-  if (std::find_if(begin(resources), end(resources), [&resource](std::weak_ptr<Resource> ia) { return !ia.expired() && ia.lock().get() == resource.get(); }) == end(resources))
+  if (std::find_if(std::begin(resources), std::end(resources), [&resource](std::weak_ptr<Resource> ia) { return !ia.expired() && ia.lock().get() == resource.get(); }) == std::end(resources))
     resources.push_back(resource);
 }
 
 void MemoryBuffer::invalidateResources()
 {
-  auto eit = std::remove_if(begin(resources), end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
-  for (auto it = begin(resources); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(resources), std::end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
+  for (auto it = std::begin(resources); it != eit; ++it)
     it->lock()->invalidateDescriptors();
-  resources.erase(eit, end(resources));
+  resources.erase(eit, std::end(resources));
 }
 
 void MemoryBuffer::notifyResources(const RenderContext& renderContext)
 {
-  auto eit = std::remove_if(begin(resources), end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
-  for (auto it = begin(resources); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(resources), std::end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
+  for (auto it = std::begin(resources); it != eit; ++it)
     it->lock()->notifyDescriptors(renderContext);
-  resources.erase(eit, end(resources));
+  resources.erase(eit, std::end(resources));
 }
 
 void MemoryBuffer::addBufferView(std::shared_ptr<BufferView> bufferView)
 {
   std::lock_guard<std::mutex> lock(mutex);
-  if (std::find_if(begin(bufferViews), end(bufferViews), [&bufferView](std::weak_ptr<BufferView> bv) { return !bv.expired() && bv.lock().get() == bufferView.get(); }) == end(bufferViews))
+  if (std::find_if(std::begin(bufferViews), std::end(bufferViews), [&bufferView](std::weak_ptr<BufferView> bv) { return !bv.expired() && bv.lock().get() == bufferView.get(); }) == std::end(bufferViews))
     bufferViews.push_back(bufferView);
 }
 
 void MemoryBuffer::notifyBufferViews(const RenderContext& renderContext, const BufferSubresourceRange& range)
 {
-  auto eit = std::remove_if(begin(bufferViews), end(bufferViews), [](std::weak_ptr<BufferView> bv) { return bv.expired();  });
-  for (auto it = begin(bufferViews); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(bufferViews), std::end(bufferViews), [](std::weak_ptr<BufferView> bv) { return bv.expired();  });
+  for (auto it = std::begin(bufferViews); it != eit; ++it)
     if (range.contains(it->lock()->subresourceRange))
       it->lock()->notifyBufferView(renderContext);
-  bufferViews.erase(eit, end(bufferViews));
+  bufferViews.erase(eit, std::end(bufferViews));
 }
 
 BufferView::BufferView(std::shared_ptr<MemoryBuffer> b, const BufferSubresourceRange& r, VkFormat f)
@@ -259,7 +259,7 @@ void BufferView::validate(const RenderContext& renderContext)
   }
   auto keyValue = getKeyID(renderContext, memBuffer->getPerObjectBehaviour());
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, BufferViewData(renderContext, memBuffer->getSwapChainImageBehaviour()) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -289,7 +289,7 @@ void BufferView::notifyBufferView(const RenderContext& renderContext)
   std::lock_guard<std::mutex> lock(mutex);
   auto keyValue = getKeyID(renderContext, memBuffer->getPerObjectBehaviour());
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, BufferViewData(renderContext, memBuffer->getSwapChainImageBehaviour()) }).first;
   pddit->second.invalidate();
 }
@@ -297,14 +297,14 @@ void BufferView::notifyBufferView(const RenderContext& renderContext)
 void BufferView::addResource(std::shared_ptr<Resource> resource)
 {
   std::lock_guard<std::mutex> lock(mutex);
-  if (std::find_if(begin(resources), end(resources), [&resource](std::weak_ptr<Resource> r) { return !r.expired() && r.lock().get() == resource.get(); }) == end(resources))
+  if (std::find_if(std::begin(resources), std::end(resources), [&resource](std::weak_ptr<Resource> r) { return !r.expired() && r.lock().get() == resource.get(); }) == std::end(resources))
     resources.push_back(resource);
 }
 
 void BufferView::notifyResources(const RenderContext& renderContext)
 {
-  auto eit = std::remove_if(begin(resources), end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
-  for (auto it = begin(resources); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(resources), std::end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
+  for (auto it = std::begin(resources); it != eit; ++it)
     it->lock()->notifyDescriptors(renderContext);
-  resources.erase(eit, end(resources));
+  resources.erase(eit, std::end(resources));
 }

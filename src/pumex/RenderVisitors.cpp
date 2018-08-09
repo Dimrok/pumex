@@ -42,7 +42,7 @@ FindSecondaryCommandBuffersVisitor::FindSecondaryCommandBuffersVisitor(const Ren
 
 void FindSecondaryCommandBuffersVisitor::apply(Node& node)
 {
-  if (node.hasSecondaryBuffer() && std::find(begin(nodes), end(nodes), &node)==end(nodes))
+  if (node.hasSecondaryBuffer() && std::find(std::begin(nodes), std::end(nodes), &node)==std::end(nodes))
   {
     nodes.push_back(&node);
     if (renderContext.renderPass != nullptr)

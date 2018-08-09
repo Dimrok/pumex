@@ -181,16 +181,16 @@ void TimeStatisticsHandler::addChannelData(float minVal, uint32_t vertexSize, fl
     float fduri   = static_cast<float>(duration[i]);
 
     acc.set(VertexSemantic::Position, fstarti, h1);
-    vertices.insert(end(vertices), cbegin(acc.values), cend(acc.values));
+    vertices.insert(std::end(vertices), std::cbegin(acc.values), std::cend(acc.values));
 
     acc.set(VertexSemantic::Position, fstarti, h0);
-    vertices.insert(end(vertices), cbegin(acc.values), cend(acc.values));
+    vertices.insert(std::end(vertices), std::cbegin(acc.values), std::cend(acc.values));
 
     acc.set(VertexSemantic::Position, fstarti + fduri, h0);
-    vertices.insert(end(vertices), cbegin(acc.values), cend(acc.values));
+    vertices.insert(std::end(vertices), std::cbegin(acc.values), std::cend(acc.values));
 
     acc.set(VertexSemantic::Position, fstarti + fduri, h1);
-    vertices.insert(end(vertices), cbegin(acc.values), cend(acc.values));
+    vertices.insert(std::end(vertices), std::cbegin(acc.values), std::cend(acc.values));
 
     indices.push_back(verticesSoFar + 0);
     indices.push_back(verticesSoFar + 1);
@@ -282,7 +282,7 @@ void TimeStatisticsHandler::collectData(Surface* surface, TimeStatistics* viewer
   float dHeight = 40.0f;
   for (const auto& group : viewerStatistics->getGroups())
   {
-    if (std::find(begin(viewerStatisticsGroups[statisticsCollection]), end(viewerStatisticsGroups[statisticsCollection]), group.first) == end(viewerStatisticsGroups[statisticsCollection]))
+    if (std::find(std::begin(viewerStatisticsGroups[statisticsCollection]), std::end(viewerStatisticsGroups[statisticsCollection]), group.first) == std::end(viewerStatisticsGroups[statisticsCollection]))
       continue;
     textSmall->setText(surface, 100 + group.first, glm::vec2(5, channelHeight -0.2*dHeight), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), group.second);
     auto channelIDs = viewerStatistics->getGroupChannelIDs(group.first);
@@ -301,7 +301,7 @@ void TimeStatisticsHandler::collectData(Surface* surface, TimeStatistics* viewer
 
   for (const auto& group : surfaceStatistics->getGroups())
   {
-    if (std::find(begin(surfaceStatisticsGroups[statisticsCollection]), end(surfaceStatisticsGroups[statisticsCollection]), group.first) == end(surfaceStatisticsGroups[statisticsCollection]))
+    if (std::find(std::begin(surfaceStatisticsGroups[statisticsCollection]), std::end(surfaceStatisticsGroups[statisticsCollection]), group.first) == std::end(surfaceStatisticsGroups[statisticsCollection]))
       continue;
     textSmall->setText(surface, 200 + group.first, glm::vec2(5, channelHeight -0.2*dHeight), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), group.second);
     auto channelIDs = surfaceStatistics->getGroupChannelIDs(group.first);

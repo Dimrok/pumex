@@ -383,7 +383,7 @@ template <typename T>
 void Buffer<T>::internalSetBufferSize(uint32_t key, VkDevice device, VkSurfaceKHR surface, size_t bufferSize)
 {
   auto pddit = perObjectData.find(key);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ key, MemoryBuffer::MemoryBufferData(device, surface, activeCount, swapChainImageBehaviour) }).first;
 
   BufferSubresourceRange range(0, bufferSize);
@@ -399,7 +399,7 @@ template <typename T>
 void Buffer<T>::internalSetData(uint32_t key, VkDevice device, VkSurfaceKHR surface, std::shared_ptr<T> dt)
 {
   auto pddit = perObjectData.find(key);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ key, MemoryBuffer::MemoryBufferData(device, surface, activeCount, swapChainImageBehaviour) }).first;
 
   BufferSubresourceRange range(0, uglyGetSize(*dt));

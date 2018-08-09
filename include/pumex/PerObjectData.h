@@ -78,7 +78,7 @@ void PerObjectData<T,U>::resize(uint32_t ac)
 template<typename T, typename U>
 void PerObjectData<T,U>::invalidate()
 {
-  std::fill(begin(valid), end(valid), false);
+  std::fill(std::begin(valid), std::end(valid), false);
 }
 
 template<typename T, typename U>

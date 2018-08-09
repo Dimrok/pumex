@@ -41,7 +41,7 @@ AssetNode::AssetNode(std::shared_ptr<Asset> asset, std::shared_ptr<DeviceMemoryA
       continue;
 
     copyAndConvertVertices(*vertices, asset->geometries[i].semantic, asset->geometries[i].vertices, asset->geometries[i].semantic);
-    std::transform(begin(asset->geometries[i].indices), end(asset->geometries[i].indices), std::back_inserter(*indices), [vertexCount](uint32_t value)->uint32_t { return value + vertexCount; });
+    std::transform(std::begin(asset->geometries[i].indices), std::end(asset->geometries[i].indices), std::back_inserter(*indices), [vertexCount](uint32_t value)->uint32_t { return value + vertexCount; });
     vertexCount += asset->geometries[i].getVertexCount();
   }
 

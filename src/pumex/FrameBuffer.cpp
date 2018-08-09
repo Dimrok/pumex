@@ -51,11 +51,11 @@ FrameBuffer::FrameBuffer(const AttachmentSize& fbs, const std::vector<FrameBuffe
     FrameBufferImageDefinition& definition = imageDefinitions[i];
     CHECK_LOG_THROW(frameBufferSize != definition.attachmentSize, "FrameBuffer::FrameBuffer() : image definition size is different from framebuffer size");
     auto mit = mi.find(definition.name);
-    CHECK_LOG_THROW(mit == end(mi), "FrameBuffer::FrameBuffer() : not all memory images have been supplied");
+    CHECK_LOG_THROW(mit == std::end(mi), "FrameBuffer::FrameBuffer() : not all memory images have been supplied");
     memoryImages.push_back(mit->second);
 
     auto vit = iv.find(definition.name);
-    CHECK_LOG_THROW(vit == end(iv), "FrameBuffer::FrameBuffer() : not all memory image views have been supplied");
+    CHECK_LOG_THROW(vit == std::end(iv), "FrameBuffer::FrameBuffer() : not all memory image views have been supplied");
     imageViews.push_back(vit->second);
   }
 }
@@ -82,7 +82,7 @@ void FrameBuffer::validate(const RenderContext& renderContext)
       pdd.second.resize(activeCount);
   }
   auto pddit = perObjectData.find(renderContext.vkSurface);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ renderContext.vkSurface, FrameBufferData(renderContext.vkDevice, renderContext.vkSurface, activeCount, swForEachImage) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -141,7 +141,7 @@ void FrameBuffer::invalidate(const RenderContext& renderContext)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(renderContext.vkSurface);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ renderContext.vkSurface, FrameBufferData(renderContext.vkDevice, renderContext.vkSurface, activeCount, swForEachImage) }).first;
   pddit->second.invalidate();
 }
@@ -196,7 +196,7 @@ void FrameBuffer::reset(Surface* surface)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(surface->surface);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return;
   for (uint32_t i = 0; i < pddit->second.data.size(); ++i)
   {
@@ -210,8 +210,8 @@ void FrameBuffer::reset(Surface* surface)
 const FrameBufferImageDefinition& FrameBuffer::getSwapChainImageDefinition() const
 {
   std::lock_guard<std::mutex> lock(mutex);
-  auto it = std::find_if(begin(imageDefinitions), end(imageDefinitions), [](const FrameBufferImageDefinition& def) { return def.attachmentType == atSurface;  });
-  CHECK_LOG_THROW(it == end(imageDefinitions), "Framebuffer used by the surface does not have swapchain image defined");
+  auto it = std::find_if(std::begin(imageDefinitions), std::end(imageDefinitions), [](const FrameBufferImageDefinition& def) { return def.attachmentType == atSurface;  });
+  CHECK_LOG_THROW(it == std::end(imageDefinitions), "Framebuffer used by the surface does not have swapchain image defined");
   return *it;
 }
 
@@ -235,17 +235,17 @@ std::shared_ptr<ImageView> FrameBuffer::getImageView(uint32_t index) const
 
 std::shared_ptr<ImageView> FrameBuffer::getImageView(const std::string& name) const
 {
-  auto it = std::find_if(begin(imageDefinitions), end(imageDefinitions), [&name](const FrameBufferImageDefinition& def) { return def.name == name; });
-  if (it == end(imageDefinitions))
+  auto it = std::find_if(std::begin(imageDefinitions), std::end(imageDefinitions), [&name](const FrameBufferImageDefinition& def) { return def.name == name; });
+  if (it == std::end(imageDefinitions))
     return std::shared_ptr<ImageView>();
-  return imageViews[std::distance(begin(imageDefinitions),it)];
+  return imageViews[std::distance(std::begin(imageDefinitions), it)];
 }
 
 VkFramebuffer FrameBuffer::getHandleFrameBuffer(const RenderContext& renderContext) const
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(renderContext.vkSurface);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return VK_NULL_HANDLE;
   return pddit->second.data[renderContext.activeIndex % activeCount].frameBuffer;
 }

@@ -57,7 +57,7 @@ MaterialSet::~MaterialSet()
 bool MaterialSet::getTargetTextureNames(uint32_t index, std::vector<std::string>& texNames) const
 {
   auto it = textureNames.find(index);
-  if (it == end(textureNames))
+  if (it == std::end(textureNames))
     return false;
   texNames = it->second;
   return true;
@@ -66,7 +66,7 @@ bool MaterialSet::getTargetTextureNames(uint32_t index, std::vector<std::string>
 bool MaterialSet::setTargetTextureLayer(uint32_t slotIndex, uint32_t layerIndex, const std::string& fileName, std::shared_ptr<gli::texture> tex)
 {
   auto nit = textureNames.find(slotIndex);
-  if (nit == end(textureNames))
+  if (nit == std::end(textureNames))
     return false;
   if (nit->second.size() <= layerIndex)
     nit->second.resize(layerIndex + 1);
@@ -142,7 +142,7 @@ std::map<TextureSemantic::Type, uint32_t> MaterialSet::registerTextures(const Ma
 {
   // register all found textures for a given material
   std::map<TextureSemantic::Type, uint32_t> registeredTextures;
-  for (auto it = cbegin(mat.textures), eit = cend(mat.textures); it != eit; ++it)
+  for (auto it = std::cbegin(mat.textures), eit = std::cend(mat.textures); it != eit; ++it)
   {
     for (const TextureSemantic& s : semantics)
     {
@@ -201,14 +201,14 @@ void TextureRegistryTextureArray::setStorageImage(uint32_t slotIndex, std::share
 std::shared_ptr<Resource> TextureRegistryTextureArray::getResource(uint32_t slotIndex)
 {
   auto it = resources.find(slotIndex);
-  CHECK_LOG_THROW(it == end(resources), "There's no resource registered. Slot index " << slotIndex);
+  CHECK_LOG_THROW(it == std::end(resources), "There's no resource registered. Slot index " << slotIndex);
   return it->second;
 }
 
 void TextureRegistryTextureArray::setTexture(uint32_t slotIndex, uint32_t layerIndex, std::shared_ptr<gli::texture> tex)
 {
   auto it = memoryImages.find(slotIndex);
-  if (it == end(memoryImages))
+  if (it == std::end(memoryImages))
     return;
   it->second->setImageLayer(layerIndex, tex);
 }
@@ -244,14 +244,14 @@ void TextureRegistryArrayOfTextures::setStorageImage(uint32_t slotIndex)
 std::vector<std::shared_ptr<Resource>>& TextureRegistryArrayOfTextures::getResources(uint32_t slotIndex)
 {
   auto it = resources.find(slotIndex);
-  CHECK_LOG_THROW(it == end(resources), "There's no resource registered. Slot index " << slotIndex);
+  CHECK_LOG_THROW(it == std::end(resources), "There's no resource registered. Slot index " << slotIndex);
   return it->second;
 }
 
 void TextureRegistryArrayOfTextures::setTexture(uint32_t slotIndex, uint32_t layerIndex, std::shared_ptr<gli::texture> tex)
 {
   auto it = memoryImages.find(slotIndex);
-  CHECK_LOG_THROW(it == end(memoryImages), "There's no textures registered. Slot index " << slotIndex);
+  CHECK_LOG_THROW(it == std::end(memoryImages), "There's no textures registered. Slot index " << slotIndex);
   auto rit = resources.find(slotIndex);
 
   if (layerIndex >= it->second.size())

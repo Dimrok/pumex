@@ -138,7 +138,7 @@ std::shared_ptr<Asset> AssetLoaderAssimp::load(std::shared_ptr<Viewer> viewer, c
           {
             aiBone* bone = mesh->mBones[j];
             auto it = asset->skeleton.invBoneNames.find(bone->mName.C_Str());
-            if (it != end(asset->skeleton.invBoneNames))
+            if (it != std::end(asset->skeleton.invBoneNames))
             {
               uint32_t boneIndex = it->second;
               asset->skeleton.bones[boneIndex].offsetMatrix = toMat4(bone->mOffsetMatrix);
@@ -170,7 +170,7 @@ std::shared_ptr<Asset> AssetLoaderAssimp::load(std::shared_ptr<Viewer> viewer, c
         {
           aiBone* bone = mesh->mBones[j];
           auto it = asset->skeleton.invBoneNames.find(bone->mName.C_Str());
-          if (it == end(asset->skeleton.invBoneNames))
+          if (it == std::end(asset->skeleton.invBoneNames))
             continue;
           uint32_t boneIndex = it->second;
           for ( uint32_t k=0; k<bone->mNumWeights; ++k )
@@ -180,7 +180,7 @@ std::shared_ptr<Asset> AssetLoaderAssimp::load(std::shared_ptr<Viewer> viewer, c
         std::vector<glm::vec4> vIndices(weights.size());
         for (uint32_t j = 0; j < weights.size(); ++j)
         {
-          std::sort(begin(weights[j]), end(weights[j]), [](const std::tuple<float, uint32_t>& lhs, const std::tuple<float, uint32_t>& rhs){ return std::get<0>(lhs)>std::get<0>(rhs); });
+          std::sort(std::begin(weights[j]), std::end(weights[j]), [](const std::tuple<float, uint32_t>& lhs, const std::tuple<float, uint32_t>& rhs){ return std::get<0>(lhs)>std::get<0>(rhs); });
           // no more than 4 weights will be used
           for (uint32_t k = 0; k<weights[j].size() && k<4; ++k)
             std::tie(vWeights[j][k], vIndices[j][k]) = weights[j][k];
@@ -329,13 +329,13 @@ std::shared_ptr<Asset> AssetLoaderAssimp::load(std::shared_ptr<Viewer> viewer, c
                 }
                 break;
               case VertexSemantic::BoneWeight: // always 4
-                if (weightIt != end(vertexWeights))
+                if (weightIt != std::end(vertexWeights))
                   acc.set(VertexSemantic::BoneWeight, weightIt->second[j].x, weightIt->second[j].y, weightIt->second[j].z, weightIt->second[j].w);
                 else
                   acc.set(VertexSemantic::BoneWeight, 1.0f);
                 break;
               case VertexSemantic::BoneIndex: // always 4
-                if (indexIt != end(vertexIndices))
+                if (indexIt != std::end(vertexIndices))
                   acc.set(VertexSemantic::BoneIndex, indexIt->second[j].x, indexIt->second[j].y, indexIt->second[j].z, indexIt->second[j].w);
                 else
                   acc.set(VertexSemantic::BoneIndex, boneIndex);
@@ -411,7 +411,7 @@ std::shared_ptr<Asset> AssetLoaderAssimp::load(std::shared_ptr<Viewer> viewer, c
         const aiVectorKey& key = nodeAnim->mPositionKeys[k];
         channel.position.push_back(TimeLine<glm::vec3>(key.mTime / ticksPerSecond, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z)));
       }
-      std::sort(begin(channel.position), end(channel.position));
+      std::sort(std::begin(channel.position), std::end(channel.position));
 
       // rotations
       for (uint32_t k = 0; k < nodeAnim->mNumRotationKeys; ++k)
@@ -419,7 +419,7 @@ std::shared_ptr<Asset> AssetLoaderAssimp::load(std::shared_ptr<Viewer> viewer, c
         const aiQuatKey& key = nodeAnim->mRotationKeys[k];
         channel.rotation.push_back(TimeLine<glm::quat>(key.mTime / ticksPerSecond, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z)));
       }
-      std::sort(begin(channel.rotation), end(channel.rotation));
+      std::sort(std::begin(channel.rotation), std::end(channel.rotation));
 
       // scales
       for (uint32_t k = 0; k < nodeAnim->mNumScalingKeys; ++k)
@@ -427,7 +427,7 @@ std::shared_ptr<Asset> AssetLoaderAssimp::load(std::shared_ptr<Viewer> viewer, c
         const aiVectorKey& key = nodeAnim->mScalingKeys[k];
         channel.scale.push_back(TimeLine<glm::vec3>(key.mTime / ticksPerSecond, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z)));
       }
-      std::sort(begin(channel.scale), end(channel.scale));
+      std::sort(std::begin(channel.scale), std::end(channel.scale));
       channel.calcBeginEndTimes();
 
       uint32_t animationIndex = animation.channels.size();

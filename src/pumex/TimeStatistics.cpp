@@ -84,7 +84,7 @@ void TimeStatistics::registerGroup(uint32_t groupID, const std::wstring& groupNa
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto git = groups.find(groupID);
-  CHECK_LOG_THROW(git != end(groups), "Statistics group already exists: " << groupID);
+  CHECK_LOG_THROW(git != std::end(groups), "Statistics group already exists: " << groupID);
   groups.insert({ groupID, groupName });
 }
 
@@ -92,7 +92,7 @@ void TimeStatistics::unregisterGroup(uint32_t groupID)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto git = groups.find(groupID);
-  CHECK_LOG_THROW(git == end(groups), "Cannot unregister nonexisting group: " << groupID);
+  CHECK_LOG_THROW(git == std::end(groups), "Cannot unregister nonexisting group: " << groupID);
   groups.erase(git);
 }
 
@@ -100,10 +100,10 @@ void TimeStatistics::registerChannel(uint32_t channelID, uint32_t groupID, const
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto it = channelIndices.find(channelID);
-  CHECK_LOG_THROW(it != end(channelIndices), "Statistics channel already exists: " << channelID );
+  CHECK_LOG_THROW(it != std::end(channelIndices), "Statistics channel already exists: " << channelID );
 
   auto git = groups.find(groupID);
-  CHECK_LOG_THROW(git == end(groups), "Statistics group is missing: " << groupID);
+  CHECK_LOG_THROW(git == std::end(groups), "Statistics group is missing: " << groupID);
 
   if (!freeChannels.empty())
   {
@@ -124,18 +124,18 @@ void TimeStatistics::unregisterChannel(uint32_t channelID)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto it = channelIndices.find(channelID);
-  CHECK_LOG_THROW(it == end(channelIndices), "Cannot unregister statistics channel : " << channelID);
+  CHECK_LOG_THROW(it == std::end(channelIndices), "Cannot unregister statistics channel : " << channelID);
   freeChannels.push_back(it->second);
   channelIndices.erase(it);
   auto git = groupChannelIndices.find(channelID);
-  CHECK_LOG_THROW(git == end(groupChannelIndices), "Cannot unregister statistics channel from group : " << channelID );
+  CHECK_LOG_THROW(git == std::end(groupChannelIndices), "Cannot unregister statistics channel from group : " << channelID );
   groupChannelIndices.erase(git);
 }
 
 void TimeStatistics::unregisterChannels(uint32_t groupID)
 {
   auto git = groups.find(groupID);
-  CHECK_LOG_THROW(git == end(groups), "Statistics group is missing: " << groupID);
+  CHECK_LOG_THROW(git == std::end(groups), "Statistics group is missing: " << groupID);
 
   std::vector<uint32_t> channelIDs = getGroupChannelIDs(groupID);
   for(auto channelID : channelIDs)
@@ -158,7 +158,7 @@ const TimeStatisticsChannel& TimeStatistics::getChannel(uint32_t channelID)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto it = channelIndices.find(channelID);
-  CHECK_LOG_THROW(it == end(channelIndices), "Statistics channel does not exist : " << channelID);
+  CHECK_LOG_THROW(it == std::end(channelIndices), "Statistics channel does not exist : " << channelID);
   return channels[it->second];
 }
 
@@ -166,7 +166,7 @@ void TimeStatistics::setValues(uint32_t channelID, double valueBegin, double val
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto it = channelIndices.find(channelID);
-  CHECK_LOG_THROW(it == end(channelIndices), "Statistics channel does not exist : "<< channelID);
+  CHECK_LOG_THROW(it == std::end(channelIndices), "Statistics channel does not exist : "<< channelID);
   channels[it->second].setValues(valueBegin, valueDuration);
 }
 

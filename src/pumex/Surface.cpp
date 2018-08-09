@@ -378,7 +378,7 @@ void Surface::validateWorkflow()
         break;
       }
       auto it = workflowResults->registeredImageViews.find(iLayout.first);
-      if (it != end(workflowResults->registeredImageViews))
+      if (it != std::end(workflowResults->registeredImageViews))
       {
         VkImage image = it->second->getHandleImage(renderContext);
         prepareBarriers.emplace_back(PipelineBarrier
@@ -602,7 +602,7 @@ std::shared_ptr<MemoryBuffer> Surface::getRegisteredMemoryBuffer(const std::stri
 {
   CHECK_LOG_THROW(workflowResults == nullptr, "workflow not compiled");
   auto it = workflowResults->registeredMemoryBuffers.find(name);
-  if (it != end(workflowResults->registeredMemoryBuffers))
+  if (it != std::end(workflowResults->registeredMemoryBuffers))
     return it->second;
   return nullptr;
 }
@@ -611,7 +611,7 @@ std::shared_ptr<MemoryImage> Surface::getRegisteredMemoryImage(const std::string
 {
   CHECK_LOG_THROW(workflowResults == nullptr, "workflow not compiled");
   auto it = workflowResults->registeredMemoryImages.find(name);
-  if (it != end(workflowResults->registeredMemoryImages))
+  if (it != std::end(workflowResults->registeredMemoryImages))
     return it->second;
   return nullptr;
 }
@@ -620,7 +620,7 @@ std::shared_ptr<ImageView> Surface::getRegisteredImageView(const std::string& na
 {
   CHECK_LOG_THROW(workflowResults == nullptr, "workflow not compiled");
   auto it = workflowResults->registeredImageViews.find(name);
-  if (it != end(workflowResults->registeredImageViews))
+  if (it != std::end(workflowResults->registeredImageViews))
     return it->second;
   return nullptr;
 }

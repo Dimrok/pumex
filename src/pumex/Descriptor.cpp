@@ -69,16 +69,16 @@ DescriptorPool::~DescriptorPool()
     std::lock_guard<std::mutex> lock(mutex);
     // find pool that uses the same layout and has not been validated yet
     auto hashVal = layout->getHashValue();
-    auto it = std::find_if(begin(poolDefinitions), end(poolDefinitions), [&](const SinglePoolDefinition& pd) { return (pd.maxSets == 0) && (pd.layout->getHashValue() == hashVal); });
+    auto it = std::find_if(std::begin(poolDefinitions), std::end(poolDefinitions), [&](const SinglePoolDefinition& pd) { return (pd.maxSets == 0) && (pd.layout->getHashValue() == hashVal); });
     uint32_t index;
-    if (it == end(poolDefinitions))
+    if (it == std::end(poolDefinitions))
     {
       index = poolDefinitions.size();
       poolDefinitions.push_back(SinglePoolDefinition(layout));
     }
     else
     {
-      index = std::distance(begin(poolDefinitions), it);
+      index = std::distance(std::begin(poolDefinitions), it);
       it->registeredDescriptorSets++;
     }
     return index;
@@ -89,7 +89,7 @@ DescriptorPool::~DescriptorPool()
     std::lock_guard<std::mutex> lock(mutex);
     auto keyValue = getKeyID(renderContext, pbPerDevice);
     auto pddit    = perObjectData.find(keyValue);
-    if (pddit == end(perObjectData))
+    if (pddit == std::end(perObjectData))
       pddit = perObjectData.insert({ keyValue, DescriptorPoolData(renderContext, swOnce) }).first;
 
     if (poolDefinitions[index].maxSets == 0)
@@ -125,7 +125,7 @@ DescriptorPool::~DescriptorPool()
   {
     std::lock_guard<std::mutex> lock(mutex);
     auto pddit    = perObjectData.find(deviceID);
-    if (pddit == end(perObjectData))
+    if (pddit == std::end(perObjectData))
       return;
     CHECK_LOG_THROW(poolDefinitions[index].maxSets == 0, "Cannot deallocate descriptor set - descriptor pool was not created before");
     vkFreeDescriptorSets(pddit->second.device, pddit->second.data[0].descriptorPools[index], 1, &descriptorSet);
@@ -151,7 +151,7 @@ void DescriptorSetLayout::validate(const RenderContext& renderContext)
   std::lock_guard<std::mutex> lock(mutex);
   auto keyValue = getKeyID(renderContext, pbPerDevice);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, DescriptorSetLayoutData(renderContext, swOnce) }).first;
   if (pddit->second.valid[0])
     return;
@@ -180,7 +180,7 @@ VkDescriptorSetLayout DescriptorSetLayout::getHandle(const RenderContext& render
   std::lock_guard<std::mutex> lock(mutex);
   auto keyValue = getKeyID(renderContext, pbPerDevice);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return VK_NULL_HANDLE;
   return pddit->second.data[0].descriptorSetLayout;
 }
@@ -308,7 +308,7 @@ void DescriptorSet::validate( const RenderContext& renderContext )
   }
   auto keyValue = getKeyID(renderContext, pbPerSurface);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, DescriptorSetData(renderContext, swForEachImage) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -373,7 +373,7 @@ VkDescriptorSet DescriptorSet::getHandle(const RenderContext& renderContext) con
   std::lock_guard<std::mutex> lock(mutex);
   auto keyValue = getKeyID(renderContext, pbPerSurface);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return VK_NULL_HANDLE;
   return pddit->second.data[renderContext.activeIndex].descriptorSet;
 }
@@ -394,7 +394,7 @@ void DescriptorSet::notify(const RenderContext& renderContext)
 {
   auto keyValue = getKeyID(renderContext, pbPerSurface);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, DescriptorSetData(renderContext,swForEachImage) }).first;
   pddit->second.invalidate();
 }
@@ -442,7 +442,7 @@ void DescriptorSet::setDescriptor(uint32_t binding, std::shared_ptr<Resource> re
 void DescriptorSet::resetDescriptor(uint32_t binding)
 {
   std::lock_guard<std::mutex> lock(mutex);
-  if (descriptors.find(binding) != end(descriptors))
+  if (descriptors.find(binding) != std::end(descriptors))
   {
     descriptors[binding]->unregisterFromResources();
     descriptors.erase(binding);
@@ -455,7 +455,7 @@ std::shared_ptr<Descriptor> DescriptorSet::getDescriptor(uint32_t binding)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto it = descriptors.find(binding);
-  if (it == end(descriptors))
+  if (it == std::end(descriptors))
     return std::shared_ptr<Descriptor>();
   return it->second;
 }
@@ -467,7 +467,7 @@ void DescriptorSet::addNode(std::shared_ptr<Node> node)
 
 void DescriptorSet::removeNode(std::shared_ptr<Node> node)
 {
-  auto it = std::find_if(begin(nodeOwners), end(nodeOwners), [node](std::weak_ptr<Node> p) -> bool { return p.lock() == node; });
-  if (it != end(nodeOwners))
+  auto it = std::find_if(std::begin(nodeOwners), std::end(nodeOwners), [node](std::weak_ptr<Node> p) -> bool { return p.lock() == node; });
+  if (it != std::end(nodeOwners))
     nodeOwners.erase(it);
 }

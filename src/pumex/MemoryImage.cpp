@@ -411,7 +411,7 @@ Image* MemoryImage::getImage(const RenderContext& renderContext) const
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(getKeyID(renderContext, perObjectBehaviour));
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return nullptr;
   return pddit->second.data[renderContext.activeIndex % activeCount].image.get();
 }
@@ -431,7 +431,7 @@ void MemoryImage::validate(const RenderContext& renderContext)
   }
   auto keyValue = getKeyID(renderContext, perObjectBehaviour);
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, MemoryImageData(renderContext, swapChainImageBehaviour) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -485,46 +485,46 @@ ImageSubresourceRange MemoryImage::getFullImageRange()
 
 void MemoryImage::addCommandBufferSource(std::shared_ptr<CommandBufferSource> cbSource)
 {
-  if (std::find_if(begin(commandBufferSources), end(commandBufferSources), [&cbSource](std::weak_ptr<CommandBufferSource> cbs) { return !cbs.expired() && cbs.lock().get() == cbSource.get(); }) == end(commandBufferSources))
+  if (std::find_if(std::begin(commandBufferSources), std::end(commandBufferSources), [&cbSource](std::weak_ptr<CommandBufferSource> cbs) { return !cbs.expired() && cbs.lock().get() == cbSource.get(); }) == std::end(commandBufferSources))
     commandBufferSources.push_back(cbSource);
 }
 
 void MemoryImage::notifyCommandBufferSources(const RenderContext& renderContext)
 {
-  auto eit = std::remove_if(begin(commandBufferSources), end(commandBufferSources), [](std::weak_ptr<CommandBufferSource> r) { return r.expired();  });
-  for (auto it = begin(commandBufferSources); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(commandBufferSources), std::end(commandBufferSources), [](std::weak_ptr<CommandBufferSource> r) { return r.expired();  });
+  for (auto it = std::begin(commandBufferSources); it != eit; ++it)
     it->lock()->notifyCommandBuffers(renderContext.activeIndex);
-  commandBufferSources.erase(eit, end(commandBufferSources));
+  commandBufferSources.erase(eit, std::end(commandBufferSources));
 }
 
 void MemoryImage::addImageView(std::shared_ptr<ImageView> imageView)
 {
-  if (std::find_if(begin(imageViews), end(imageViews), [&imageView](std::weak_ptr<ImageView> iv) { return !iv.expired() && iv.lock().get() == imageView.get(); }) == end(imageViews))
+  if (std::find_if(std::begin(imageViews), std::end(imageViews), [&imageView](std::weak_ptr<ImageView> iv) { return !iv.expired() && iv.lock().get() == imageView.get(); }) == std::end(imageViews))
     imageViews.push_back(imageView);
 }
 
 void MemoryImage::notifyImageViews(const RenderContext& renderContext, const ImageSubresourceRange& range)
 {
-  auto eit = std::remove_if(begin(imageViews), end(imageViews), [](std::weak_ptr<ImageView> iv) { return iv.expired();  });
-  for (auto it = begin(imageViews); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(imageViews), std::end(imageViews), [](std::weak_ptr<ImageView> iv) { return iv.expired();  });
+  for (auto it = std::begin(imageViews); it != eit; ++it)
     if( range.contains(it->lock()->subresourceRange) )
       it->lock()->notify(renderContext);
-  imageViews.erase(eit, end(imageViews));
+  imageViews.erase(eit, std::end(imageViews));
 }
 
 void MemoryImage::invalidateImageViews()
 {
-  auto eit = std::remove_if(begin(imageViews), end(imageViews), [](std::weak_ptr<ImageView> iv) { return iv.expired();  });
-  for (auto it = begin(imageViews); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(imageViews), std::end(imageViews), [](std::weak_ptr<ImageView> iv) { return iv.expired();  });
+  for (auto it = std::begin(imageViews); it != eit; ++it)
     it->lock()->invalidateResources();
-  imageViews.erase(eit, end(imageViews));
+  imageViews.erase(eit, std::end(imageViews));
 }
 
 // caution : mutex lock must be called prior to this method
 void MemoryImage::internalSetImageTraits(uint32_t key, VkDevice device, VkSurfaceKHR surface, const ImageTraits& traits, VkImageAspectFlags aMask)
 {
   auto pddit = perObjectData.find(key);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ key, MemoryImageData(device, surface, activeCount, swapChainImageBehaviour) }).first;
 
   // remove all previous calls to setImageTraits
@@ -539,7 +539,7 @@ void MemoryImage::internalSetImageTraits(uint32_t key, VkDevice device, VkSurfac
 void MemoryImage::internalSetImage(uint32_t key, VkDevice device, VkSurfaceKHR surface, std::shared_ptr<gli::texture> tex)
 {
   auto pddit = perObjectData.find(key);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
   {
     pddit = perObjectData.insert({ key, MemoryImageData(device, surface, activeCount, swapChainImageBehaviour) }).first;
     // image does not exist at that moment - we should add imageTraits
@@ -577,7 +577,7 @@ void MemoryImage::internalSetImages(uint32_t key, VkDevice device, VkSurfaceKHR 
     }
   }
   auto pddit = perObjectData.find(key);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ key, MemoryImageData(device, surface, activeCount, swapChainImageBehaviour) }).first;
   for (uint32_t i = 0; i < images.size(); i++)
   {
@@ -600,7 +600,7 @@ void MemoryImage::internalClearImage(uint32_t key, VkDevice device, VkSurfaceKHR
   ImageSubresourceRange realRange(aspectMask, range.baseMipLevel, range.levelCount, range.baseArrayLayer, range.layerCount);
 
   auto pddit = perObjectData.find(key);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ key, MemoryImageData(device, surface, activeCount, swapChainImageBehaviour) }).first;
 
   // remove all previous calls for image clearing
@@ -657,7 +657,7 @@ void ImageView::validate(const RenderContext& renderContext)
   }
   auto keyValue = getKeyID(renderContext, memoryImage->getPerObjectBehaviour());
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, ImageViewData(renderContext, memoryImage->getSwapChainImageBehaviour()) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -688,29 +688,29 @@ void ImageView::notify(const RenderContext& renderContext)
   std::lock_guard<std::mutex> lock(mutex);
   auto keyValue = getKeyID(renderContext, memoryImage->getPerObjectBehaviour());
   auto pddit = perObjectData.find(keyValue);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ keyValue, ImageViewData(renderContext, memoryImage->getSwapChainImageBehaviour()) }).first;
   pddit->second.invalidate();
 }
 
 void ImageView::addResource(std::shared_ptr<Resource> resource)
 {
-  if (std::find_if(begin(resources), end(resources), [&resource](std::weak_ptr<Resource> r) { return !r.expired() && r.lock().get() == resource.get(); }) == end(resources))
+  if (std::find_if(std::begin(resources), std::end(resources), [&resource](std::weak_ptr<Resource> r) { return !r.expired() && r.lock().get() == resource.get(); }) == std::end(resources))
     resources.push_back(resource);
 }
 
 void ImageView::notifyResources(const RenderContext& renderContext)
 {
-  auto eit = std::remove_if(begin(resources), end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
-  for (auto it = begin(resources); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(resources), std::end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
+  for (auto it = std::begin(resources); it != eit; ++it)
     it->lock()->notifyDescriptors(renderContext);
-  resources.erase(eit, end(resources));
+  resources.erase(eit, std::end(resources));
 }
 
 void ImageView::invalidateResources()
 {
-  auto eit = std::remove_if(begin(resources), end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
-  for (auto it = begin(resources); it != eit; ++it)
+  auto eit = std::remove_if(std::begin(resources), std::end(resources), [](std::weak_ptr<Resource> r) { return r.expired();  });
+  for (auto it = std::begin(resources); it != eit; ++it)
     it->lock()->invalidateDescriptors();
-  resources.erase(eit, end(resources));
+  resources.erase(eit, std::end(resources));
 }

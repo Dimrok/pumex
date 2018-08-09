@@ -159,7 +159,7 @@ RenderWorkflow::~RenderWorkflow()
 void RenderWorkflow::addResourceType(std::shared_ptr<RenderWorkflowResourceType> tp)
 {
   auto it = resourceTypes.find(tp->typeName);
-  CHECK_LOG_THROW(it != end(resourceTypes), "RenderWorkflow : resource type already exists : " + tp->typeName);
+  CHECK_LOG_THROW(it != std::end(resourceTypes), "RenderWorkflow : resource type already exists : " + tp->typeName);
   resourceTypes[tp->typeName] = tp;
   valid = false;
 }
@@ -177,14 +177,14 @@ void RenderWorkflow::addResourceType(const std::string& typeName, bool persisten
 std::shared_ptr<RenderWorkflowResourceType> RenderWorkflow::getResourceType(const std::string& typeName) const
 {
   auto it = resourceTypes.find(typeName);
-  CHECK_LOG_THROW(it == end(resourceTypes), "RenderWorkflow : there is no resource type with name " + typeName);
+  CHECK_LOG_THROW(it == std::end(resourceTypes), "RenderWorkflow : there is no resource type with name " + typeName);
   return it->second;
 }
 
 void RenderWorkflow::addRenderOperation(std::shared_ptr<RenderOperation> op)
 {
   auto it = renderOperations.find(op->name);
-  CHECK_LOG_THROW(it != end(renderOperations), "RenderWorkflow : operation already exists : " + op->name);
+  CHECK_LOG_THROW(it != std::end(renderOperations), "RenderWorkflow : operation already exists : " + op->name);
 
   op->setRenderWorkflow(shared_from_this());
   renderOperations[op->name] = op;
@@ -207,7 +207,7 @@ std::vector<std::string> RenderWorkflow::getRenderOperationNames() const
 std::shared_ptr<RenderOperation> RenderWorkflow::getRenderOperation(const std::string& opName) const
 {
   auto it = renderOperations.find(opName);
-  CHECK_LOG_THROW(it == end(renderOperations), "RenderWorkflow : there is no operation with name " + opName);
+  CHECK_LOG_THROW(it == std::end(renderOperations), "RenderWorkflow : there is no operation with name " + opName);
   return it->second;
 }
 
@@ -227,7 +227,7 @@ void RenderWorkflow::addAttachmentInput(const std::string& opName, const std::st
   auto operation = getRenderOperation(opName);
   auto resType   = getResourceType(resourceType);
   auto resIt     = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
     CHECK_LOG_THROW(resType != resIt->second->resourceType, "RenderWorkflow : ambiguous type of the input");
@@ -241,7 +241,7 @@ void RenderWorkflow::addAttachmentOutput(const std::string& opName, const std::s
   auto operation = getRenderOperation(opName);
   auto resType   = getResourceType(resourceType);
   auto resIt     = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
   {
@@ -258,7 +258,7 @@ void RenderWorkflow::addAttachmentResolveOutput(const std::string& opName, const
   auto operation = getRenderOperation(opName);
   auto resType   = getResourceType(resourceType);
   auto resIt     = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
   {
@@ -266,7 +266,7 @@ void RenderWorkflow::addAttachmentResolveOutput(const std::string& opName, const
     // resource may only have one transition with output type
   }
   auto resolveIt = resources.find(resourceSource);
-  CHECK_LOG_THROW(resolveIt == end(resources), "RenderWorkflow : added pointer no to nonexisting resolve resource");
+  CHECK_LOG_THROW(resolveIt == std::end(resources), "RenderWorkflow : added pointer no to nonexisting resolve resource");
   CHECK_LOG_THROW(resType->metaType != RenderWorkflowResourceType::Attachment, "RenderWorkflow::addAttachmentResolveOutput() : resource is not an attachment");
   std::shared_ptr<ResourceTransition> resourceTransition = std::make_shared<ResourceTransition>(operation, resIt->second, rttAttachmentResolveOutput, layout, loadOp);
   resourceTransition->resolveResource = resolveIt->second;
@@ -279,7 +279,7 @@ void RenderWorkflow::addAttachmentDepthInput(const std::string& opName, const st
   auto operation = getRenderOperation(opName);
   auto resType   = getResourceType(resourceType);
   auto resIt     = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
   {
@@ -296,7 +296,7 @@ void RenderWorkflow::addAttachmentDepthOutput(const std::string& opName, const s
   auto operation = getRenderOperation(opName);
   auto resType   = getResourceType(resourceType);
   auto resIt     = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
   {
@@ -313,7 +313,7 @@ void RenderWorkflow::addBufferInput(const std::string& opName, const std::string
   auto operation = getRenderOperation(opName);
   auto resType   = getResourceType(resourceType);
   auto resIt     = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
     CHECK_LOG_THROW(resType != resIt->second->resourceType, "RenderWorkflow : ambiguous type of the input");
@@ -327,7 +327,7 @@ void RenderWorkflow::addBufferOutput(const std::string& opName, const std::strin
   auto operation = getRenderOperation(opName);
   auto resType   = getResourceType(resourceType);
   auto resIt     = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
   {
@@ -344,7 +344,7 @@ void RenderWorkflow::addImageInput(const std::string& opName, const std::string&
   auto operation = getRenderOperation(opName);
   auto resType = getResourceType(resourceType);
   auto resIt = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
     CHECK_LOG_THROW(resType != resIt->second->resourceType, "RenderWorkflow : ambiguous type of the input");
@@ -358,7 +358,7 @@ void RenderWorkflow::addImageOutput(const std::string& opName, const std::string
   auto operation = getRenderOperation(opName);
   auto resType = getResourceType(resourceType);
   auto resIt = resources.find(resourceName);
-  if (resIt == end(resources))
+  if (resIt == std::end(resources))
     resIt = resources.insert({ resourceName, std::make_shared<WorkflowResource>(resourceName, resType) }).first;
   else
   {
@@ -373,7 +373,7 @@ void RenderWorkflow::addImageOutput(const std::string& opName, const std::string
 std::shared_ptr<WorkflowResource> RenderWorkflow::getResource(const std::string& resourceName) const
 {
   auto it = resources.find(resourceName);
-  CHECK_LOG_THROW(it == end(resources), "RenderWorkflow : there is no resource with name " + resourceName);
+  CHECK_LOG_THROW(it == std::end(resources), "RenderWorkflow : there is no resource with name " + resourceName);
   return it->second;
 }
 
@@ -388,7 +388,7 @@ std::vector<std::string> RenderWorkflow::getResourceNames() const
 void RenderWorkflow::associateMemoryObject(const std::string& name, std::shared_ptr<MemoryObject> memoryObject, VkImageViewType imageViewType)
 {
   auto resIt = resources.find(name);
-  CHECK_LOG_THROW(resIt == end(resources), "RenderWorkflow : cannot associate memory object to nonexisting resource");
+  CHECK_LOG_THROW(resIt == std::end(resources), "RenderWorkflow : cannot associate memory object to nonexisting resource");
   CHECK_LOG_THROW(resIt->second->resourceType->metaType == RenderWorkflowResourceType::Attachment, "Cannot associate memory object with attachment. Attachments are created by RenderWorkflow");
   switch (memoryObject->getType())
   {
@@ -416,7 +416,7 @@ void RenderWorkflow::associateMemoryObject(const std::string& name, std::shared_
 std::shared_ptr<MemoryObject> RenderWorkflow::getAssociatedMemoryObject(const std::string& name) const
 {
   auto resIt = associatedMemoryObjects.find(name);
-  if (resIt == end(associatedMemoryObjects))
+  if (resIt == std::end(associatedMemoryObjects))
     return std::shared_ptr<MemoryObject>();
   return resIt->second;
 }
@@ -509,7 +509,7 @@ std::vector<std::shared_ptr<ResourceTransition>> RenderWorkflow::getOperationIO(
 {
   auto operation = getRenderOperation(opName);
   std::vector<std::shared_ptr<ResourceTransition>> results;
-  std::copy_if(begin(transitions), end(transitions), std::back_inserter(results),
+  std::copy_if(std::begin(transitions), std::end(transitions), std::back_inserter(results),
     [operation, transitionTypes](std::shared_ptr<ResourceTransition> c)->bool{ return c->operation == operation && ( c->transitionType & transitionTypes) ; });
   return results;
 }
@@ -518,7 +518,7 @@ std::vector<std::shared_ptr<ResourceTransition>> RenderWorkflow::getResourceIO(c
 {
   auto resource = getResource(resourceName);
   std::vector<std::shared_ptr<ResourceTransition>> results;
-  std::copy_if(begin(transitions), end(transitions), std::back_inserter(results),
+  std::copy_if(std::begin(transitions), std::end(transitions), std::back_inserter(results),
     [resource, transitionTypes](std::shared_ptr<ResourceTransition> c)->bool { return c->resource == resource && (c->transitionType & transitionTypes); });
   return results;
 }
@@ -606,14 +606,14 @@ std::vector<std::shared_ptr<RenderOperation>> recursiveScheduleOperations(const 
     for (auto& operationName : operationNames)
     {
       auto operation = workflow.getRenderOperation(operationName);
-      if (doneOperations.find(operation) != end(doneOperations))
+      if (doneOperations.find(operation) != std::end(doneOperations))
         continue;
       auto nextOperations = workflow.getNextOperations(operationName);
       bool final = true;
       // check if ALL outputs point at operations in doneOperations
       for (auto& nextOp : nextOperations)
       {
-        if (doneOperations.find(nextOp) == end(doneOperations))
+        if (doneOperations.find(nextOp) == std::end(doneOperations))
         {
           final = false;
           break;
@@ -638,8 +638,8 @@ std::vector<std::shared_ptr<RenderOperation>> recursiveScheduleOperations(const 
     results.push_back(xx);
   }
   // return a result with lowest cost
-  auto minit = std::min_element(begin(cost), end(cost));
-  auto i = std::distance(begin(cost), minit);
+  auto minit = std::min_element(std::begin(cost), std::end(cost));
+  auto i = std::distance(std::begin(cost), minit);
   return results[i];
 }
 
@@ -792,8 +792,8 @@ void SingleQueueWorkflowCompiler::calculatePartialOrdering(const RenderWorkflow&
     {
       // if operation has no inputs, or all inputs are on existingResources then operation may be added to partial ordering
       auto inTransitions = workflow.getOperationIO(operation->name, rttAllInputs);
-      uint32_t notExistingInputs = std::count_if(begin(inTransitions), end(inTransitions),
-        [&existingResources](std::shared_ptr<ResourceTransition> transition) { return existingResources.find(transition->resource) == end(existingResources); });
+      uint32_t notExistingInputs = std::count_if(std::begin(inTransitions), std::end(inTransitions),
+        [&existingResources](std::shared_ptr<ResourceTransition> transition) { return existingResources.find(transition->resource) == std::end(existingResources); });
       if (notExistingInputs == 0)
       {
         // operation is performed - add it to partial ordering
@@ -805,11 +805,11 @@ void SingleQueueWorkflowCompiler::calculatePartialOrdering(const RenderWorkflow&
           existingResources.insert(outTransition->resource);
         // add next operations to nextOperations2
         auto follow = workflow.getNextOperations(operation->name);
-        std::copy(begin(follow), end(follow), std::inserter(nextOperations2, end(nextOperations2)));
+        std::copy(std::begin(follow), std::end(follow), std::inserter(nextOperations2, std::end(nextOperations2)));
       }
     }
     nextOperations.clear();
-    std::copy_if(begin(nextOperations2), end(nextOperations2), std::inserter(nextOperations, end(nextOperations)), [&doneOperations](std::shared_ptr<RenderOperation> op) { return doneOperations.find(op) == end(doneOperations); });
+    std::copy_if(std::begin(nextOperations2), std::end(nextOperations2), std::inserter(nextOperations, std::end(nextOperations)), [&doneOperations](std::shared_ptr<RenderOperation> op) { return doneOperations.find(op) == std::end(doneOperations); });
   }
 }
 
@@ -861,9 +861,9 @@ std::vector<std::string> recursiveLongestPath(const std::vector<std::pair<std::s
   {
     for (auto& rp : resourcePairs)
     {
-      if (doneVertices.find(rp.first) == end(doneVertices))
+      if (doneVertices.find(rp.first) == std::end(doneVertices))
         continue;
-      if (doneVertices.find(rp.second) != end(doneVertices))
+      if (doneVertices.find(rp.second) != std::end(doneVertices))
         continue;
       vertices.insert(rp.second);
     }
@@ -931,9 +931,9 @@ void SingleQueueWorkflowCompiler::findAliasedResources(const RenderWorkflow& wor
     if (consumedInQueue.size() > 1)
       continue;
 
-    int inQueueIndex = consumedInQueue.empty() ? -1 : *begin(consumedInQueue);
-    int inOpFirst    = inOpIndices.empty() ? -1 : *begin(inOpIndices);
-    int inOpLast     = inOpIndices.empty() ? -1 : *rbegin(inOpIndices);
+    int inQueueIndex = consumedInQueue.empty() ? -1 : *std::begin(consumedInQueue);
+    int inOpFirst    = inOpIndices.empty() ? -1 : *std::begin(inOpIndices);
+    int inOpLast     = inOpIndices.empty() ? -1 : *std::rbegin(inOpIndices);
 
     auto outTransitions = workflow.getResourceIO(resourceName, rttAllOutputs);
     int outQueueIndex = outTransitions.empty() ? -1 : operationIndex.at(outTransitions[0]->operation->name).first;
@@ -945,7 +945,7 @@ void SingleQueueWorkflowCompiler::findAliasedResources(const RenderWorkflow& wor
   // OK, so we have a group of resources where resource reuse is possible. First - we build pairs of resources that may be reused
   // Remark : algorithm complexity is n^2
   std::vector<std::pair<std::string, std::string>> resourcePairs;
-  for (auto it0 = begin(aliasingPossible); it0 != end(aliasingPossible); ++it0)
+  for (auto it0 = std::begin(aliasingPossible); it0 != std::end(aliasingPossible); ++it0)
   {
     auto resource0 = workflow.getResource(it0->first);
     // cannot overwrite a resource marked as persistent
@@ -963,7 +963,7 @@ void SingleQueueWorkflowCompiler::findAliasedResources(const RenderWorkflow& wor
       r0iq  = r0oq;
       r0ip0 = r0ip1 = r0op;
     }
-    for (auto it1 = begin(aliasingPossible); it1 != end(aliasingPossible); ++it1)
+    for (auto it1 = std::begin(aliasingPossible); it1 != std::end(aliasingPossible); ++it1)
     {
       // cannot merge resource with itself
       if (it0 == it1) continue;
@@ -991,8 +991,8 @@ void SingleQueueWorkflowCompiler::findAliasedResources(const RenderWorkflow& wor
     auto longestPath = recursiveLongestPath(resourcePairs);
 
     std::vector<std::pair<std::string, std::string>> rp;
-    std::copy_if(begin(resourcePairs), end(resourcePairs), std::back_inserter(rp),
-      [&longestPath](const std::pair<std::string, std::string>& thisPair) { return std::find(begin(longestPath), end(longestPath), thisPair.first) == end(longestPath) && std::find(begin(longestPath), end(longestPath), thisPair.second) == end(longestPath); });
+    std::copy_if(std::begin(resourcePairs), std::end(resourcePairs), std::back_inserter(rp),
+      [&longestPath](const std::pair<std::string, std::string>& thisPair) { return std::find(std::begin(longestPath), std::end(longestPath), thisPair.first) == std::end(longestPath) && std::find(std::begin(longestPath), std::end(longestPath), thisPair.second) == std::end(longestPath); });
     resourcePairs = rp;
 
     if (longestPath.size() > 1)
@@ -1067,8 +1067,8 @@ void SingleQueueWorkflowCompiler::buildFrameBuffersAndRenderPasses(const RenderW
       auto subpass = std::dynamic_pointer_cast<RenderSubPass>(workflowResults->commands[j][i]);
       if (subpass == nullptr || subpass->renderPass == nullptr)
         continue;
-      auto rpit = std::find(begin(renderPasses), end(renderPasses), subpass->renderPass);
-      if (rpit == end(renderPasses))
+      auto rpit = std::find(std::begin(renderPasses), std::end(renderPasses), subpass->renderPass);
+      if (rpit == std::end(renderPasses))
         renderPasses.push_back(subpass->renderPass);
 
       auto transitions = workflow.getOperationIO(workflowResults->commands[j][i]->operation->name, rttAttachmentOutput | rttAttachmentResolveOutput);
@@ -1099,21 +1099,21 @@ void SingleQueueWorkflowCompiler::buildFrameBuffersAndRenderPasses(const RenderW
         auto aspectMask     = getAspectMask(resourceType->attachment.attachmentType);
         uint32_t layerCount = static_cast<uint32_t>(resourceType->attachment.attachmentSize.imageSize.z);
         auto ait            = workflowResults->registeredMemoryImages.find(resourceName);
-        if (ait == end(workflowResults->registeredMemoryImages))
+        if (ait == std::end(workflowResults->registeredMemoryImages))
         {
           ImageTraits imageTraits(resourceType->attachment.imageUsage, resourceType->attachment.format, imSize, 1, layerCount, resourceType->attachment.samples, false, VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_IMAGE_TYPE_2D, VK_SHARING_MODE_EXCLUSIVE);
           SwapChainImageBehaviour scib = (resourceType->attachment.attachmentType == atSurface) ? swForEachImage : swOnce;
           ait = workflowResults->registeredMemoryImages.insert({ resourceName, std::make_shared<MemoryImage>(imageTraits, workflow.frameBufferAllocator, aspectMask, pbPerSurface, scib, false, false) }).first;
         }
         auto aiv = workflowResults->registeredImageViews.find(resourceName);
-        if (aiv == end(workflowResults->registeredImageViews))
+        if (aiv == std::end(workflowResults->registeredImageViews))
         {
           ImageSubresourceRange range(aspectMask, 0, 1, 0, layerCount);
           VkImageViewType imageViewType = (layerCount > 1) ? VK_IMAGE_VIEW_TYPE_2D_ARRAY : VK_IMAGE_VIEW_TYPE_2D;
           aiv = workflowResults->registeredImageViews.insert({ resourceName, std::make_shared<ImageView>(ait->second, range, imageViewType) }).first;
           workflowResults->initialImageLayouts.insert({ resourceName, std::make_tuple(opLayouts[resid], resourceType->attachment.attachmentType , aspectMask) });
         }
-        if (definedImages.find(resourceName) == end(definedImages))
+        if (definedImages.find(resourceName) == std::end(definedImages))
         {
           rpInitialLayouts.push_back(opLayouts[resid]);
           definedImages.insert({ resourceName,static_cast<uint32_t>(frameBufferDefinitions.size()) });
@@ -1231,8 +1231,8 @@ void SingleQueueWorkflowCompiler::buildFrameBuffersAndRenderPasses(const RenderW
 
         if (!resolveAttachments.empty())
         {
-          auto it = std::find_if(begin(resolveAttachments), end(resolveAttachments), [outputAttachment](const std::shared_ptr<ResourceTransition>& rt) -> bool { return rt->resolveResource == outputAttachment->resource; });
-          if (it != end(resolveAttachments))
+          auto it = std::find_if(std::begin(resolveAttachments), std::end(resolveAttachments), [outputAttachment](const std::shared_ptr<ResourceTransition>& rt) -> bool { return rt->resolveResource == outputAttachment->resource; });
+          if (it != std::end(resolveAttachments))
             ra.push_back({ definedImages.at(workflowResults->resourceAlias.at((*it)->resource->name)), (*it)->layout });
           else
             ra.push_back({ VK_ATTACHMENT_UNUSED, VK_IMAGE_LAYOUT_UNDEFINED });
@@ -1251,7 +1251,7 @@ void SingleQueueWorkflowCompiler::buildFrameBuffersAndRenderPasses(const RenderW
 
       auto inTransitions  = workflow.getOperationIO(subPass->operation->name, rttAllAttachmentInputs);
       auto outTransitions = workflow.getOperationIO(subPass->operation->name, rttAllAttachmentOutputs);
-      auto thisOperation  = std::find(begin(partialOrdering), end(partialOrdering), subPass->operation);
+      auto thisOperation  = std::find(std::begin(partialOrdering), std::end(partialOrdering), subPass->operation);
       bool lastSubpass    = ((subPass->subpassIndex + 1) == renderPass->subPasses.size());
 
       // check which resources are used in a subpass
@@ -1271,7 +1271,7 @@ void SingleQueueWorkflowCompiler::buildFrameBuffersAndRenderPasses(const RenderW
         auto resource          = workflow.getResource(resName);
         if (resource->resourceType->metaType != RenderWorkflowResourceType::Attachment)
           continue;
-        if (definedImages.find(workflowResults->resourceAlias.at(resName)) == end(definedImages))
+        if (definedImages.find(workflowResults->resourceAlias.at(resName)) == std::end(definedImages))
           continue;
         auto resOutTransitions = workflow.getResourceIO(resName, rttAllOutputs);
         auto resInTransitions  = workflow.getResourceIO(resName, rttAllInputs);
@@ -1279,7 +1279,7 @@ void SingleQueueWorkflowCompiler::buildFrameBuffersAndRenderPasses(const RenderW
         bool usedLater = false;
         for (auto& transition : resInTransitions)
         {
-          if (std::find(thisOperation + 1, end(partialOrdering), transition->operation) != end(partialOrdering))
+          if (std::find(thisOperation + 1, std::end(partialOrdering), transition->operation) != std::end(partialOrdering))
           {
             usedLater = true;
             break;
@@ -1288,14 +1288,14 @@ void SingleQueueWorkflowCompiler::buildFrameBuffersAndRenderPasses(const RenderW
         bool usedBefore = false;
         for (auto& transition : resOutTransitions)
         {
-          if (std::find(begin(partialOrdering), thisOperation, transition->operation) != end(partialOrdering))
+          if (std::find(std::begin(partialOrdering), thisOperation, transition->operation) != std::end(partialOrdering))
           {
             usedBefore = true;
             break;
           }
         }
         bool isSurfaceOrPersistent = resource->resourceType->attachment.attachmentType == atSurface || resource->resourceType->persistent;
-        bool usedNow               = subpassResourceNames.find(resName) != end(subpassResourceNames) || subpassResourceNames.find(workflowResults->resourceAlias.at(resName)) != end(subpassResourceNames);
+        bool usedNow               = subpassResourceNames.find(resName) != std::end(subpassResourceNames) || subpassResourceNames.find(workflowResults->resourceAlias.at(resName)) != std::end(subpassResourceNames);
         bool preserve              = usedBefore && !usedNow && (usedLater || isSurfaceOrPersistent);
         bool save                  = lastSubpass && (usedLater || isSurfaceOrPersistent);
         uint32_t attIndex          = definedImages.at(workflowResults->resourceAlias.at(resName));
@@ -1350,17 +1350,17 @@ void SingleQueueWorkflowCompiler::createPipelineBarriers(const RenderWorkflow& w
     // sort consuming transitions according to operation index, operations from current queue will be first in sorted vector
     auto consumingTransitions = workflow.getResourceIO(resourceName, rttAllInputs);
     // place transitions that are in the same queue first
-    auto pos = std::partition(begin(consumingTransitions), end(consumingTransitions), [&queueNumber, &generatingQueueNumber](std::shared_ptr<ResourceTransition> lhs)
+    auto pos = std::partition(std::begin(consumingTransitions), std::end(consumingTransitions), [&queueNumber, &generatingQueueNumber](std::shared_ptr<ResourceTransition> lhs)
     {
       return queueNumber[lhs->operation->name] == generatingQueueNumber;
     });
     // sort transitions from the same queue according to order of operations
-    std::sort(begin(consumingTransitions), pos, [&operationNumber](std::shared_ptr<ResourceTransition> lhs, std::shared_ptr<ResourceTransition> rhs)
+    std::sort(std::begin(consumingTransitions), pos, [&operationNumber](std::shared_ptr<ResourceTransition> lhs, std::shared_ptr<ResourceTransition> rhs)
     {
       return operationNumber[lhs->operation->name] < operationNumber[rhs->operation->name];
     });
     // sort transitions from other queues
-    std::sort(pos, end(consumingTransitions), [&queueNumber, &operationNumber](std::shared_ptr<ResourceTransition> lhs, std::shared_ptr<ResourceTransition> rhs)
+    std::sort(pos, std::end(consumingTransitions), [&queueNumber, &operationNumber](std::shared_ptr<ResourceTransition> lhs, std::shared_ptr<ResourceTransition> rhs)
     {
       if (queueNumber[lhs->operation->name] == queueNumber[rhs->operation->name])
         return operationNumber[lhs->operation->name] < operationNumber[rhs->operation->name];
@@ -1400,10 +1400,10 @@ void SingleQueueWorkflowCompiler::createSubpassDependency(std::shared_ptr<Resour
     }
     dstSubpassIndex = consumingSubpass->subpassIndex;
 
-    auto dep = std::find_if(begin(consumingSubpass->renderPass->dependencies), end(consumingSubpass->renderPass->dependencies),
+    auto dep = std::find_if(std::begin(consumingSubpass->renderPass->dependencies), std::end(consumingSubpass->renderPass->dependencies),
       [srcSubpassIndex, dstSubpassIndex](const SubpassDependencyDefinition& sd) -> bool { return sd.srcSubpass == srcSubpassIndex && sd.dstSubpass == dstSubpassIndex; });
-    if (dep == end(consumingSubpass->renderPass->dependencies))
-      dep = consumingSubpass->renderPass->dependencies.insert(end(consumingSubpass->renderPass->dependencies), SubpassDependencyDefinition(srcSubpassIndex, dstSubpassIndex, 0, 0, 0, 0, 0));
+    if (dep == std::end(consumingSubpass->renderPass->dependencies))
+      dep = consumingSubpass->renderPass->dependencies.insert(std::end(consumingSubpass->renderPass->dependencies), SubpassDependencyDefinition(srcSubpassIndex, dstSubpassIndex, 0, 0, 0, 0, 0));
     dep->srcStageMask    |= srcStageMask;
     dep->dstStageMask    |= dstStageMask;
     dep->srcAccessMask   |= srcAccessMask;
@@ -1415,10 +1415,10 @@ void SingleQueueWorkflowCompiler::createSubpassDependency(std::shared_ptr<Resour
     auto generatingSubpass = std::dynamic_pointer_cast<RenderSubPass>(generatingCommand);
     srcSubpassIndex = generatingSubpass->subpassIndex;
 
-    auto dep = std::find_if(begin(generatingSubpass->renderPass->dependencies), end(generatingSubpass->renderPass->dependencies),
+    auto dep = std::find_if(std::begin(generatingSubpass->renderPass->dependencies), std::end(generatingSubpass->renderPass->dependencies),
       [srcSubpassIndex, dstSubpassIndex](const SubpassDependencyDefinition& sd) -> bool { return sd.srcSubpass == srcSubpassIndex && sd.dstSubpass == dstSubpassIndex; });
-    if (dep == end(generatingSubpass->renderPass->dependencies))
-      dep = generatingSubpass->renderPass->dependencies.insert(end(generatingSubpass->renderPass->dependencies), SubpassDependencyDefinition(srcSubpassIndex, dstSubpassIndex, 0, 0, 0, 0, 0));
+    if (dep == std::end(generatingSubpass->renderPass->dependencies))
+      dep = generatingSubpass->renderPass->dependencies.insert(std::end(generatingSubpass->renderPass->dependencies), SubpassDependencyDefinition(srcSubpassIndex, dstSubpassIndex, 0, 0, 0, 0, 0));
     dep->srcStageMask    |= srcStageMask;
     dep->dstStageMask    |= dstStageMask;
     dep->srcAccessMask   |= srcAccessMask;
@@ -1439,7 +1439,7 @@ void SingleQueueWorkflowCompiler::createPipelineBarrier(std::shared_ptr<Resource
   if (memoryObject == nullptr)
   {
     auto it = workflowResults->registeredMemoryImages.find(workflowResults->resourceAlias.at(generatingTransition->resource->name));
-    if (it == end(workflowResults->registeredMemoryImages))
+    if (it == std::end(workflowResults->registeredMemoryImages))
       return;
     memoryObject = it->second;
   }
@@ -1459,7 +1459,7 @@ void SingleQueueWorkflowCompiler::createPipelineBarrier(std::shared_ptr<Resource
 
   MemoryObjectBarrierGroup rbg(srcStageMask, dstStageMask, dependencyFlags);
   auto rbgit = consumingCommand->barriersBeforeOp.find(rbg);
-  if (rbgit == end(consumingCommand->barriersBeforeOp))
+  if (rbgit == std::end(consumingCommand->barriersBeforeOp))
     rbgit = consumingCommand->barriersBeforeOp.insert({ rbg, std::vector<MemoryObjectBarrier>() }).first;
   switch (generatingTransition->resource->resourceType->metaType)
   {

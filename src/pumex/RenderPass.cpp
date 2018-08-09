@@ -175,7 +175,7 @@ void RenderPass::invalidate(const RenderContext& renderContext)
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(renderContext.vkDevice);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ renderContext.vkDevice, RenderPassData(renderContext, swForEachImage) }).first;
   pddit->second.invalidate();
 }
@@ -191,7 +191,7 @@ void RenderPass::validate(const RenderContext& renderContext)
   }
 
   auto pddit = perObjectData.find(renderContext.vkDevice);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     pddit = perObjectData.insert({ renderContext.vkDevice, RenderPassData(renderContext, swForEachImage) }).first;
   uint32_t activeIndex = renderContext.activeIndex % activeCount;
   if (pddit->second.valid[activeIndex])
@@ -244,7 +244,7 @@ VkRenderPass RenderPass::getHandle(const RenderContext& renderContext) const
 {
   std::lock_guard<std::mutex> lock(mutex);
   auto pddit = perObjectData.find(renderContext.vkDevice);
-  if (pddit == end(perObjectData))
+  if (pddit == std::end(perObjectData))
     return VK_NULL_HANDLE;
   return pddit->second.data[renderContext.activeIndex % activeCount].renderPass;
 }

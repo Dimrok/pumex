@@ -70,7 +70,7 @@ void Device::realize()
     queueCount[i] = physicalDevice->queueFamilyProperties[i].queueCount;
 
   std::vector<uint32_t> chosenFamilies(requestedQueues.size());
-  std::fill(begin(chosenFamilies), end(chosenFamilies), std::numeric_limits<uint32_t>::max());
+  std::fill(std::begin(chosenFamilies), std::end(chosenFamilies), std::numeric_limits<uint32_t>::max());
 
   // at first - assign queues that have only one queue family available
   for (uint32_t i = 0; i < requestedQueues.size(); i++)
@@ -102,7 +102,7 @@ void Device::realize()
   for (uint32_t i = 0; i < chosenFamilies.size(); ++i)
   {
     auto it = groupedRequests.find(chosenFamilies[i]);
-    if (it == end(groupedRequests))
+    if (it == std::end(groupedRequests))
       it = groupedRequests.insert({ chosenFamilies[i], std::vector<float>() }).first;
     it->second.push_back(requestedQueues[i].priority);
   }
@@ -130,7 +130,7 @@ void Device::realize()
     enableDebugMarkers = true;
   }
 
-  std::copy( cbegin(requestedDeviceExtensions), cend(requestedDeviceExtensions), std::back_inserter(enabledDeviceExtensions) );
+  std::copy( std::cbegin(requestedDeviceExtensions), std::cend(requestedDeviceExtensions), std::back_inserter(enabledDeviceExtensions) );
 
   if (enabledDeviceExtensions.size() > 0)
   {
@@ -142,7 +142,7 @@ void Device::realize()
 
   // collect all created queues
   std::vector<uint32_t> queueIndex(physicalDevice->queueFamilyProperties.size());
-  std::fill(begin(queueIndex), end(queueIndex), 0);
+  std::fill(std::begin(queueIndex), std::end(queueIndex), 0);
   for (uint32_t i=0; i<requestedQueues.size(); ++i)
   {
     VkQueue queue;
@@ -213,7 +213,7 @@ std::shared_ptr<StagingBuffer> Device::acquireStagingBuffer(const void* data, Vk
   std::shared_ptr<StagingBuffer> resultBuffer;
 
   std::lock_guard<std::mutex> lock(stagingMutex);
-  for (auto it = begin(stagingBuffers); it != end(stagingBuffers); ++it)
+  for (auto it = std::begin(stagingBuffers); it != std::end(stagingBuffers); ++it)
   {
     if ( (*it)->isReserved() || (*it)->bufferSize() < size)
       continue;
@@ -423,4 +423,3 @@ void Device::setEventName(VkEvent _event, const std::string& name)
 {
   setObjectName((uint64_t)_event, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT, name);
 }
-
