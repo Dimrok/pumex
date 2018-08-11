@@ -104,6 +104,7 @@ list( APPEND PUMEXLIB_HEADERS
   ${CMAKE_CURRENT_SOURCE_DIR}/include/pumex/Window.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/pumex/utils/ActionQueue.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/pumex/utils/Buffer.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/pumex/utils/EnumIterator.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/pumex/utils/HashCombine.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/pumex/utils/Log.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/pumex/utils/Shapes.h

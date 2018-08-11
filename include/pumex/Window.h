@@ -54,48 +54,6 @@ struct PUMEX_EXPORT WindowTraits
   std::string windowName;
 };
 
-// Class storing a single input event ( mouse or keyboard )
-
-// Helper class that enables iterating over modern C++ enums.
-// Found this gem on Stack Overflow : https://stackoverflow.com/questions/261963/how-can-i-iterate-over-an-enum
-// TODO : this definitely should be moved out of here...
-
-template < typename C, C beginVal, C endVal>
-class EnumIterator
-{
-  typedef typename std::underlying_type<C>::type val_t;
-  int val;
-public:
-  EnumIterator(const C & f) : val(static_cast<val_t>(f))
-  {
-  }
-  EnumIterator() : val(static_cast<val_t>(beginVal))
-  {
-  }
-  EnumIterator operator++()
-  {
-    ++val;
-    return *this;
-  }
-  C operator*()
-  {
-    return static_cast<C>(val);
-  }
-  EnumIterator begin() //default ctor is good
-  {
-    return *this;
-  }
-  EnumIterator end()
-  {
-      static const EnumIterator endIter=++EnumIterator(endVal); // cache it
-      return endIter;
-  }
-  bool operator!=(const EnumIterator& i)
-  {
-    return val != i.val;
-  }
-};
-
 // Abstract base class representing a system window. Window is associated to a surface ( 1 to 1 association )
 class PUMEX_EXPORT Window
 {

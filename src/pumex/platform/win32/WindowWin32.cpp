@@ -24,6 +24,7 @@
 #include <pumex/Viewer.h>
 #include <pumex/Surface.h>
 #include <pumex/utils/Log.h>
+#include <pumex/utils/EnumIterator.h>
 
 using namespace pumex;
 
